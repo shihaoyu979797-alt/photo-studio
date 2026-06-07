@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Right Moment">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- 防止 iOS 自动识别电话号码/邮件变成链接 -->
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<!-- 让微信内置浏览器以标准模式渲染 -->
+<meta http-equiv="Cache-Control" content="no-transform">
+<title>Right Moment · 在线选片</title>
+<style>
+/* 内联字体回退：iOS/Android 系统字体，无需网络 */
+:root {
+  --font-serif: Georgia, 'Times New Roman', 'Songti SC', 'SimSun', serif;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+</style>
+<style>
+:root {
+  --cream:#F7F3EE; --warm-white:#FDFAF6; --charcoal:#1C1917;
+  --warm-gray:#78716C; --light-gray:#E8E0D8; --accent:#B8860B;
+  --accent-light:#D4A843; --rose:#C17B6F; --sage:#7A9E7E; --ink:#2D2520;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;overflow-x:hidden}
+body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);min-height:100vh}
+
+/* 颗粒层：pointer-events:none 确保不拦截点击 */
+.grain-overlay{
+  position:fixed;inset:0;pointer-events:none !important;z-index:0;opacity:.18;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  touch-action:none;
+}
+
+/* HERO */
+.hero{position:relative;padding:52px 24px 40px;text-align:center;
+  background:linear-gradient(180deg,#EDE7DC,var(--cream));border-bottom:1px solid var(--light-gray);overflow:hidden}
+.hero-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:300px;height:300px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(184,134,11,.12),transparent 70%)}
+.studio-en{font-family:var(--font-display);font-size:clamp(26px,7vw,38px);
+  font-weight:600;letter-spacing:.06em;color:var(--ink);margin-bottom:4px}
+.studio-en em{font-style:italic;color:var(--accent)}
+.studio-cn{font-size:13px;letter-spacing:.4em;color:var(--warm-gray);margin-bottom:22px}
+.hero-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px}
+.hero-divider::before,.hero-divider::after{content:'';flex:1;max-width:72px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.hero-divider span{font-size:16px;color:var(--accent)}
+.hero-desc{font-size:12px;color:var(--warm-gray);line-height:1.8;max-width:320px;margin:0 auto}
+
+/* PROGRESS */
+.progress-wrap{display:flex;align-items:center;justify-content:center;
+  padding:16px 20px;background:var(--warm-white);border-bottom:1px solid var(--light-gray);
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+.step-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--warm-gray);
+  letter-spacing:.05em;transition:color .3s}
+.step-item.active{color:var(--accent);font-weight:500}
+.step-item.done{color:var(--sage)}
+.step-circle{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;
+  transition:all .3s;flex-shrink:0}
+.step-item.active .step-circle{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step-item.done .step-circle{background:var(--sage);color:#fff;border-color:var(--sage)}
+.step-line{width:24px;height:1px;background:var(--light-gray);margin:0 3px}
+
+/* SECTION */
+.section{padding:28px 20px;animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-family:var(--font-display);font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--warm-gray);letter-spacing:.05em;margin-bottom:20px}
+
+/* GENDER */
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gender-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/4;
+  cursor:pointer;border:2px solid transparent;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color:transparent}
+.gender-card:active{transform:scale(.97)}
+.gender-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(184,134,11,.2)}
+.gender-card-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:64px;overflow:hidden}
+.gender-card-bg img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.gender-overlay{position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.65));
+  display:flex;align-items:flex-end;padding:16px;pointer-events:none}
+.gender-label{color:#fff;font-size:16px;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.gender-check{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:13px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);transform:scale(0);
+  pointer-events:none}
+.gender-card.selected .gender-check{opacity:1;transform:scale(1)}
+
+/* AGE CHIPS */
+.age-chips{display:flex;flex-wrap:wrap;gap:10px}
+.age-chip{padding:9px 18px;border-radius:100px;border:1.5px solid var(--light-gray);
+  font-size:13px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  transition:all .25s;user-select:none;-webkit-tap-highlight-color:transparent}
+.age-chip:active{transform:scale(.95)}
+.age-chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;
+  box-shadow:0 4px 12px rgba(184,134,11,.3)}
+
+/* STYLE GRID */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.style-card{border-radius:12px;overflow:hidden;border:2px solid transparent;
+  cursor:pointer;position:relative;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  background:#E8D5C4;-webkit-tap-highlight-color:transparent}
+.style-card:active{transform:scale(.96)}
+.style-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(184,134,11,.2)}
+.style-thumb{aspect-ratio:3/4;position:relative;overflow:hidden;background:#ccc}
+.style-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:top;transition:transform .4s ease;display:block}
+.style-card:active .style-thumb img{transform:scale(1.04)}
+.style-info{padding:10px 12px;background:var(--warm-white);border-top:1px solid var(--light-gray)}
+.style-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.style-desc{font-size:11px;color:var(--warm-gray)}
+.style-badge{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(4px);font-size:10px;color:var(--ink);padding:3px 8px;
+  border-radius:100px;pointer-events:none;z-index:2}
+.style-check{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;
+  background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:14px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);transform:scale(0);
+  pointer-events:none;z-index:2}
+.style-card.selected .style-check{opacity:1;transform:scale(1)}
+.tag-hot{background:rgba(255,255,255,.92);color:var(--rose)}
+.tag-popular{background:rgba(255,255,255,.92);color:var(--accent)}
+.tag-new{background:rgba(255,255,255,.92);color:var(--sage)}
+
+/* BTN common */
+.btn-primary{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;
+  border-radius:10px;font-size:14px;font-family:var(--font-sans);cursor:pointer;
+  letter-spacing:.05em;box-shadow:0 4px 16px rgba(184,134,11,.4);transition:opacity .2s;
+  -webkit-tap-highlight-color:transparent}
+.btn-primary:active{opacity:.85}
+.btn-secondary{padding:13px;border:1.5px solid var(--light-gray);background:transparent;
+  border-radius:10px;font-size:13px;font-family:var(--font-sans);cursor:pointer;
+  color:var(--warm-gray);transition:all .2s;-webkit-tap-highlight-color:transparent}
+
+/* SAMPLE GRID */
+.gallery-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.gallery-count{font-size:11px;color:var(--warm-gray);background:var(--light-gray);
+  padding:3px 10px;border-radius:100px}
+.filter-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:16px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{padding:8px 14px;border-radius:8px;border:1.5px solid var(--light-gray);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  white-space:nowrap;transition:all .2s;user-select:none;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent}
+.filter-tab.selected{background:var(--accent);border-color:var(--accent);color:#fff}
+.sample-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.sample-item{aspect-ratio:2/3;border-radius:8px;overflow:hidden;cursor:pointer;
+  position:relative;background:#ddd;-webkit-tap-highlight-color:transparent}
+.sample-item:active{opacity:.85}
+.sample-thumb{width:100%;height:100%;position:relative}
+.sample-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.sample-thumb-fallback{position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:28px}
+.sample-fav{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;border:none;outline:none;z-index:5;
+  opacity:1;transition:opacity .2s;-webkit-tap-highlight-color:transparent}
+.sample-item.liked .sample-fav{background:var(--rose);color:#fff}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.92);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s}
+.lightbox.open{opacity:1;pointer-events:all}
+.lightbox-inner{width:85vw;max-width:340px;
+  transform:scale(.9);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.lightbox.open .lightbox-inner{transform:scale(1)}
+.lightbox-img{width:100%;aspect-ratio:2/3;border-radius:12px;overflow:hidden;
+  position:relative;background:#333;margin-bottom:14px}
+.lightbox-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lightbox-meta{color:#fff;text-align:center;margin-bottom:14px}
+.lightbox-title{font-size:15px;margin-bottom:3px}
+.lightbox-sub{font-size:12px;opacity:.6}
+.lightbox-actions{display:flex;gap:10px}
+.lb-btn{flex:1;padding:12px;border-radius:8px;font-size:13px;
+  font-family:var(--font-sans);cursor:pointer;transition:all .2s;border:none;
+  -webkit-tap-highlight-color:transparent}
+.lb-outline{background:transparent;border:1.5px solid rgba(255,255,255,.3);color:#fff}
+.lb-fill{background:var(--accent);color:#fff}
+.lb-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:none;color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:10;
+  -webkit-tap-highlight-color:transparent}
+
+/* LIKED BAR */
+.liked-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--warm-white);border-top:1px solid var(--light-gray);
+  padding:12px 20px 22px;transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 -8px 32px rgba(0,0,0,.1)}
+.liked-bar.visible{transform:translateY(0)}
+.liked-bar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.liked-bar-label{font-size:13px;color:var(--ink)}
+.liked-bar-count{font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:100px}
+.liked-thumbs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.liked-thumbs::-webkit-scrollbar{display:none}
+.liked-thumb{width:48px;height:64px;border-radius:6px;flex-shrink:0;
+  position:relative;overflow:hidden;border:1.5px solid var(--accent);background:#ddd}
+.liked-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.liked-thumb-remove{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;
+  background:rgba(0,0,0,.65);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:8px;cursor:pointer;border:none;z-index:3;-webkit-tap-highlight-color:transparent}
+.proceed-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;
+  border-radius:10px;font-size:14px;font-family:var(--font-sans);cursor:pointer;
+  box-shadow:0 4px 16px rgba(184,134,11,.4);-webkit-tap-highlight-color:transparent}
+
+/* FORM */
+.form-card{background:var(--warm-white);border-radius:16px;padding:20px;
+  border:1px solid var(--light-gray);margin-bottom:16px}
+.form-row{margin-bottom:16px}
+.form-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--warm-gray);margin-bottom:8px;display:block}
+.form-input,.form-textarea{width:100%;padding:12px 14px;border:1.5px solid var(--light-gray);
+  border-radius:8px;font-size:14px;font-family:var(--font-sans);
+  background:var(--cream);color:var(--ink);outline:none;transition:border-color .2s}
+.form-input:focus,.form-textarea:focus{border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(184,134,11,.1)}
+.form-textarea{min-height:80px;resize:none}
+.form-note{font-size:11px;color:var(--warm-gray);margin-top:6px;line-height:1.5}
+.date-chips{display:flex;flex-wrap:wrap;gap:8px}
+.date-chip{padding:8px 14px;border-radius:8px;border:1.5px solid var(--light-gray);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  transition:all .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+.date-chip.selected{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* SUMMARY */
+.summary-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--warm-gray);margin-bottom:6px}
+.summary-value{font-size:14px;color:var(--ink)}
+.summary-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.summary-thumb{width:44px;height:58px;border-radius:6px;position:relative;
+  overflow:hidden;border:1px solid var(--light-gray);background:#ddd}
+.summary-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* STATUS */
+.submit-status{padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;
+  margin-bottom:12px;display:none}
+.submit-status.show{display:block}
+.status-sending{background:#EAF3FB;color:#0C447C;border:1px solid #90C3E8}
+.status-error{background:#FDEDED;color:#7A1F1F;border:1px solid #E8A0A0}
+
+/* SUBMIT BTN */
+.submit-btn{width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-light));
+  color:#fff;border:none;border-radius:12px;font-size:15px;
+  font-family:var(--font-sans);cursor:pointer;letter-spacing:.05em;
+  box-shadow:0 6px 24px rgba(184,134,11,.4);transition:opacity .2s;
+  -webkit-tap-highlight-color:transparent}
+.submit-btn:active{opacity:.85}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* SUCCESS */
+.success-page{min-height:80vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:40px 24px;text-align:center;
+  animation:fadeUp .6s ease both}
+.success-icon{width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-light));
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+  margin:0 auto 24px;box-shadow:0 8px 32px rgba(184,134,11,.4)}
+.success-title{font-family:var(--font-display);font-size:24px;color:var(--ink);margin-bottom:8px}
+.success-sub{font-size:13px;color:var(--warm-gray);line-height:1.8;margin-bottom:24px}
+.success-card{background:var(--warm-white);border-radius:16px;padding:20px;
+  width:100%;max-width:340px;border:1px solid var(--light-gray);margin-bottom:20px;text-align:left}
+.success-row{display:flex;justify-content:space-between;align-items:flex-start;
+  padding:8px 0;border-bottom:1px solid var(--light-gray);font-size:13px;gap:8px}
+.success-row:last-child{border-bottom:none}
+.success-row span:first-child{color:var(--warm-gray);flex-shrink:0}
+.success-row span:last-child{text-align:right;word-break:break-all;font-size:12px}
+.restart-btn{padding:12px 32px;border-radius:100px;border:1.5px solid var(--accent);
+  color:var(--accent);background:transparent;font-size:13px;font-family:var(--font-sans);
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.restart-btn:active{background:var(--accent);color:#fff}
+
+/* OWNER FAB */
+.owner-fab{position:fixed;bottom:24px;right:20px;z-index:300;
+  width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;border:none;
+  font-size:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);
+  display:flex;align-items:center;justify-content:center;transition:transform .2s;
+  -webkit-tap-highlight-color:transparent}
+.owner-fab:active{transform:scale(.92)}
+
+/* OWNER MODAL */
+.owner-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(4px);display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;transition:opacity .3s}
+.owner-modal.open{opacity:1;pointer-events:all}
+.owner-sheet{width:100%;background:var(--warm-white);border-radius:20px 20px 0 0;
+  padding:20px 20px 36px;max-height:85vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.owner-modal.open .owner-sheet{transform:translateY(0)}
+.owner-handle{width:40px;height:4px;background:var(--light-gray);border-radius:2px;margin:0 auto 20px}
+.owner-title{font-family:var(--font-display);font-size:18px;color:var(--ink);margin-bottom:4px}
+.owner-sub{font-size:11px;color:var(--warm-gray);margin-bottom:20px}
+.manage-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;
+  padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.manage-tabs::-webkit-scrollbar{display:none}
+.manage-tab{padding:7px 14px;border-radius:100px;border:1.5px solid var(--light-gray);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  white-space:nowrap;transition:all .2s;user-select:none;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent}
+.manage-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.manage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.manage-item{aspect-ratio:2/3;border-radius:8px;overflow:hidden;position:relative;cursor:pointer}
+.manage-item-inner{width:100%;height:100%;position:relative}
+.manage-item-inner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.manage-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;opacity:1;transition:opacity .2s}
+.manage-item:hover .manage-overlay,.manage-item:active .manage-overlay{opacity:1}
+.manage-item-label{color:#fff;font-size:10px;text-align:center;padding:0 4px}
+.manage-del{background:var(--rose);color:#fff;border:none;border-radius:100px;
+  font-size:11px;padding:4px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.manage-add-btn{width:100%;padding:12px;border:1.5px dashed var(--light-gray);
+  border-radius:10px;background:transparent;color:var(--warm-gray);
+  font-size:13px;font-family:var(--font-sans);cursor:pointer;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  -webkit-tap-highlight-color:transparent}
+.owner-actions{display:flex;gap:10px;margin-top:16px}
+.owner-btn{flex:1;padding:12px;border-radius:10px;font-size:13px;
+  font-family:var(--font-sans);cursor:pointer;border:none;
+  -webkit-tap-highlight-color:transparent}
+.owner-btn-outline{background:transparent;border:1.5px solid var(--light-gray);color:var(--warm-gray)}
+.owner-btn-fill{background:var(--accent);color:#fff}
+.reset-confirm{background:#FFF3CD;border:1px solid #F5C842;border-radius:10px;
+  padding:12px;margin-bottom:12px;font-size:12px;color:#7A5500;line-height:1.6}
+.reset-confirm.hidden{display:none!important}
+.reset-btns{display:flex;gap:8px;margin-top:8px}
+.rcb{flex:1;padding:8px;border-radius:8px;font-size:12px;cursor:pointer;border:none;
+  font-family:var(--font-sans);-webkit-tap-highlight-color:transparent}
+.rcb-cancel{background:var(--light-gray);color:var(--warm-gray)}
+.rcb-ok{background:var(--rose);color:#fff}
+
+.page-content{padding-bottom:100px}
+.hidden{display:none!important}
+.row-btns{display:flex;gap:12px;margin-top:20px}
+</style>
+</head>
+<body>
+
+<!-- 颗粒纹理层，pointer-events:none 不拦截任何点击 -->
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- HERO -->
+<div class="hero" id="heroSection">
+  <div class="hero-glow"></div>
+  <div class="studio-en"><em>Right</em> Moment</div>
+  <div class="studio-cn">瞬时摄影工作室</div>
+  <div class="hero-divider"><span>✦</span></div>
+  <div class="hero-desc">请按照引导完成风格选择，我们将为您定制专属拍摄方案</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressBar">
+  <div class="step-item active" id="s1"><div class="step-circle">1</div><span>基本信息</span></div>
+  <div class="step-line"></div>
+  <div class="step-item" id="s2"><div class="step-circle">2</div><span>选择风格</span></div>
+  <div class="step-line"></div>
+  <div class="step-item" id="s3"><div class="step-circle">3</div><span>浏览样片</span></div>
+  <div class="step-line"></div>
+  <div class="step-item" id="s4"><div class="step-circle">4</div><span>确认预约</span></div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page-content" id="page1">
+  <div class="section">
+    <div class="section-title">您是？</div>
+    <div class="section-sub">选择性别，为您筛选最合适的样片风格</div>
+    <div class="gender-grid">
+      <div class="gender-card" id="gc-female" onclick="selectGender('female',this)">
+        <div class="gender-card-bg">
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80&fit=crop&crop=face"
+               alt="女生" onerror="this.parentNode.innerHTML='<span style=\'font-size:64px\'>👩</span>'">
+        </div>
+        <div class="gender-overlay"><div class="gender-label">女生</div></div>
+        <div class="gender-check">✓</div>
+      </div>
+      <div class="gender-card" id="gc-male" onclick="selectGender('male',this)">
+        <div class="gender-card-bg">
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80&fit=crop&crop=face"
+               alt="男生" onerror="this.parentNode.innerHTML='<span style=\'font-size:64px\'>👨</span>'">
+        </div>
+        <div class="gender-overlay"><div class="gender-label">男生</div></div>
+        <div class="gender-check">✓</div>
+      </div>
+    </div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="section-title">年龄段</div>
+    <div class="section-sub">帮助我们匹配最合适的拍摄风格</div>
+    <div class="age-chips">
+      <div class="age-chip" onclick="selectAge('child',this)">👶 0–6岁</div>
+      <div class="age-chip" onclick="selectAge('teen',this)">🧒 7–17岁</div>
+      <div class="age-chip" onclick="selectAge('young',this)">🧑 18–30岁</div>
+      <div class="age-chip" onclick="selectAge('adult',this)">🧔 31–45岁</div>
+      <div class="age-chip" onclick="selectAge('senior',this)">👴 46岁+</div>
+    </div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <button class="btn-primary" onclick="goToPage(2)">下一步 · 选择风格 →</button>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page-content hidden" id="page2">
+  <div class="section">
+    <div class="section-title">选择拍摄风格</div>
+    <div class="section-sub">可多选，我们将展示对应风格样片</div>
+    <div class="style-grid" id="styleGrid"></div>
+    <div class="row-btns">
+      <button class="btn-secondary" style="flex:1" onclick="goToPage(1)">← 上一步</button>
+      <button class="btn-primary" style="flex:2;padding:13px" onclick="goToPage(3)">浏览样片 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page-content hidden" id="page3">
+  <div class="section">
+    <div class="gallery-header">
+      <div>
+        <div class="section-title" style="margin-bottom:2px">精选样片</div>
+        <div class="section-sub" style="margin-bottom:0">点击 ❤️ 收藏喜欢的风格</div>
+      </div>
+      <div class="gallery-count" id="galleryCount">0 张</div>
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab selected" onclick="filterSamples('all',this)">全部</button>
+      <button class="filter-tab" onclick="filterSamples('mood',this)">情绪写真</button>
+      <button class="filter-tab" onclick="filterSamples('portrait',this)">清新写真</button>
+      <button class="filter-tab" onclick="filterSamples('couple',this)">情侣写真</button>
+      <button class="filter-tab" onclick="filterSamples('travel',this)">旅拍</button>
+      <button class="filter-tab" onclick="filterSamples('child',this)">儿童</button>
+      <button class="filter-tab" onclick="filterSamples('vintage',this)">复古胶片</button>
+    </div>
+    <div class="sample-grid" id="sampleGrid"></div>
+    <div class="row-btns">
+      <button class="btn-secondary" style="flex:1" onclick="goToPage(2)">← 返回</button>
+      <button class="btn-primary" style="flex:2;padding:13px" onclick="goToPage(4)">填写预约信息 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page-content hidden" id="page4">
+  <div class="section">
+    <div class="section-title">完善预约信息</div>
+    <div class="section-sub">填写后我们会尽快与您联系</div>
+    <div class="form-card">
+      <div class="summary-label">风格偏好</div>
+      <div class="summary-value" id="sumStyles">—</div>
+      <div style="height:1px;background:var(--light-gray);margin:12px 0"></div>
+      <div class="summary-label">收藏样片（<span id="sumCount">0</span> 张）</div>
+      <div class="summary-thumbs" id="sumThumbs"></div>
+    </div>
+    <div class="form-card">
+      <div class="form-row">
+        <label class="form-label">您的姓名 *</label>
+        <input class="form-input" id="inputName" type="text" placeholder="请输入姓名">
+      </div>
+      <div class="form-row">
+        <label class="form-label">联系电话 *</label>
+        <input class="form-input" id="inputPhone" type="tel" placeholder="请输入手机号">
+      </div>
+      <div class="form-row">
+        <label class="form-label">期望拍摄日期</label>
+        <div class="date-chips">
+          <div class="date-chip" onclick="selectDate('近期（1周内）',this)">近期（1周内）</div>
+          <div class="date-chip" onclick="selectDate('2周内',this)">2周内</div>
+          <div class="date-chip" onclick="selectDate('1个月内',this)">1个月内</div>
+          <div class="date-chip" onclick="selectDate('具体日期商议',this)">具体日期商议</div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <label class="form-label">备注</label>
+        <textarea class="form-textarea" id="inputNote" placeholder="特殊要求、场地偏好、纪念日等..."></textarea>
+        <div class="form-note">* 我们会在24小时内通过电话联系您</div>
+      </div>
+    </div>
+    <div class="submit-status" id="submitStatus"></div>
+    <div class="row-btns">
+      <button class="btn-secondary" style="flex:1" onclick="goToPage(3)">← 返回</button>
+      <button class="submit-btn" id="submitBtn" style="flex:2" onclick="submitForm()">✓ 提交选片</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5 SUCCESS -->
+<div class="hidden" id="page5">
+  <div class="success-page">
+    <div class="success-icon">✨</div>
+    <div class="success-title">选片成功</div>
+    <div class="success-sub">感谢您选择 Right Moment<br>我们将在24小时内电话联系您<br>为您安排专属拍摄档期</div>
+    <div class="success-card" id="successCard"></div>
+    <button class="restart-btn" onclick="restartFlow()">重新选片</button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-inner">
+    <div class="lightbox-img" id="lbImg"></div>
+    <div class="lightbox-meta">
+      <div class="lightbox-title" id="lbTitle"></div>
+      <div class="lightbox-sub" id="lbSub"></div>
+    </div>
+    <div class="lightbox-actions">
+      <button class="lb-btn lb-outline" onclick="closeLightbox()">关闭</button>
+      <button class="lb-btn lb-fill" id="lbLikeBtn" onclick="toggleLikeFromLightbox()">❤️ 收藏此样片</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIKED BAR -->
+<div class="liked-bar" id="likedBar">
+  <div class="liked-bar-top">
+    <div class="liked-bar-label">已收藏样片</div>
+    <div class="liked-bar-count" id="likedCount">0</div>
+  </div>
+  <div class="liked-thumbs" id="likedThumbs"></div>
+  <button class="proceed-btn" onclick="goToPage(4)">填写预约信息，完成选片 →</button>
+</div>
+
+<!-- OWNER FAB -->
+<button class="owner-fab" id="ownerFab" onclick="openOwnerPanel()">⚙️</button>
+
+<!-- OWNER MODAL -->
+<div class="owner-modal" id="ownerModal">
+  <div class="owner-sheet" onclick="event.stopPropagation()">
+    <div class="owner-handle"></div>
+    <div class="owner-title">样片管理</div>
+    <div class="owner-sub">上传真实样片替换默认图，存储在本设备浏览器（IndexedDB）</div>
+    <div class="manage-tabs" id="manageTabs">
+      <div class="manage-tab active" onclick="switchManageTab('mood',this)">情绪写真</div>
+      <div class="manage-tab" onclick="switchManageTab('portrait',this)">清新写真</div>
+      <div class="manage-tab" onclick="switchManageTab('couple',this)">情侣写真</div>
+      <div class="manage-tab" onclick="switchManageTab('travel',this)">旅拍</div>
+      <div class="manage-tab" onclick="switchManageTab('child',this)">儿童</div>
+      <div class="manage-tab" onclick="switchManageTab('vintage',this)">复古胶片</div>
+    </div>
+    <div class="manage-grid" id="manageGrid"></div>
+    <button class="manage-add-btn" onclick="document.getElementById('uploadInput').click()">
+      ＋ 上传样片（可多选）
+    </button>
+    <input type="file" id="uploadInput" accept="image/*" multiple style="display:none" onchange="handleUpload(event)">
+    <div style="font-size:11px;color:var(--warm-gray);margin-bottom:12px;line-height:1.6">
+      支持 JPG/PNG/WEBP，建议竖向比例。图片永久存储在本设备，跨设备需重新上传。
+    </div>
+    <div class="reset-confirm hidden" id="resetConfirm">
+      ⚠️ 确定清除「<span id="resetTabName"></span>」分类下所有自定义样片吗？
+      <div class="reset-btns">
+        <button class="rcb rcb-cancel" onclick="hideResetConfirm()">取消</button>
+        <button class="rcb rcb-ok" onclick="doReset()">确认清除</button>
+      </div>
+    </div>
+    <div class="owner-actions">
+      <button class="owner-btn owner-btn-outline" onclick="showResetConfirm()">🔄 重置此分类</button>
+      <button class="owner-btn owner-btn-fill" onclick="closeOwnerPanel()">完成 ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ══ CONFIG ══
+const FORMSPREE = 'https://formspree.io/f/xpqepyze';
+
+// ══ STATE ══
+const S = {
+  gender: null, age: null, styles: [],
+  liked: [], date: null, page: 1, lbItem: null
+};
+
+const STYLE_NAMES = {
+  mood:'情绪写真', portrait:'清新写真', couple:'情侣写真',
+  travel:'旅拍写真', child:'儿童写真', vintage:'复古胶片'
+};
+const AGE_MAP = {child:'0–6岁',teen:'7–17岁',young:'18–30岁',adult:'31–45岁',senior:'46岁+'};
+const GENDER_MAP = {female:'女生',male:'男生'};
+
+// ══ STYLE CARD IMAGES ══
+const STYLE_IMGS = {
+  female:{
+    mood:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80&fit=crop&crop=top',
+    portrait:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&q=80&fit=crop&crop=top',
+    couple:'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=600&q=80&fit=crop',
+    travel:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80&fit=crop',
+    child:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80&fit=crop&crop=top',
+    vintage:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80&fit=crop&crop=top'
+  },
+  male:{
+    mood:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80&fit=crop&crop=top',
+    portrait:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&fit=crop&crop=top',
+    couple:'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&q=80&fit=crop',
+    travel:'https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=600&q=80&fit=crop',
+    child:'https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=600&q=80&fit=crop&crop=top',
+    vintage:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=600&q=80&fit=crop&crop=top'
+  }
+};
+const STYLE_META = [
+  {key:'mood',    badge:'🔥 热门',badgeCls:'tag-hot',    name:'情绪写真',desc:'暗调 · 氛围感 · 电影感',fb:'linear-gradient(135deg,#1a1a2e,#4a1942)'},
+  {key:'portrait',badge:'⭐ 经典',badgeCls:'tag-popular',name:'清新写真',desc:'自然光 · 明亮 · 清新感',fb:'linear-gradient(135deg,#ffecd2,#fcb69f)'},
+  {key:'couple',  badge:'💕 情侣',badgeCls:'tag-hot',    name:'情侣写真',desc:'甜蜜 · 浪漫 · 记录爱情',fb:'linear-gradient(135deg,#a18cd1,#fbc2eb)'},
+  {key:'travel',  badge:'🌍 旅拍',badgeCls:'tag-new',    name:'旅拍写真',desc:'户外 · 自然 · 随性记录',fb:'linear-gradient(135deg,#2bc0e4,#eaecc6)'},
+  {key:'child',   badge:'🌟 推荐',badgeCls:'tag-popular',name:'儿童写真',desc:'活泼 · 可爱 · 纯真年华',fb:'linear-gradient(135deg,#f6d365,#fda085)'},
+  {key:'vintage', badge:'✨ 新品',badgeCls:'tag-new',    name:'复古胶片',desc:'质感 · 怀旧 · 胶片色调',fb:'linear-gradient(135deg,#d4a574,#8b6f47)'}
+];
+
+// ══ SAMPLES DATA ══
+const SAMPLES = [
+  // 情绪写真
+  {id:1,style:'mood',label:'暗调情绪01',desc:'电影感暗调',bg:'linear-gradient(135deg,#1a1a2e,#4a1942)',
+   img:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=75&fit=crop&crop=face'},
+  {id:2,style:'mood',label:'烛光情绪02',desc:'温暖暗调',bg:'linear-gradient(135deg,#2c1810,#8b4513)',
+   img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=75&fit=crop&crop=face'},
+  {id:3,style:'mood',label:'迷离写真03',desc:'朦胧灰调',bg:'linear-gradient(135deg,#2d2d2d,#6b6b6b)',
+   img:'https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?w=400&q=75&fit=crop&crop=face'},
+  {id:4,style:'mood',label:'月光系列04',desc:'深夜蓝调',bg:'linear-gradient(135deg,#0a0a2e,#1a1a5e)',
+   img:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&q=75&fit=crop&crop=face'},
+  {id:5,style:'mood',label:'黑白情绪05',desc:'黑白高对比',bg:'linear-gradient(135deg,#111,#555)',
+   img:'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=400&q=75&fit=crop&crop=face'},
+  {id:6,style:'mood',label:'暗红系列06',desc:'神秘暗红',bg:'linear-gradient(135deg,#4a0000,#c0392b)',
+   img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=75&fit=crop&crop=face'},
+  {id:7,style:'mood',label:'森林光影07',desc:'户外暗调',bg:'linear-gradient(135deg,#1a2e1a,#2d4a2d)',
+   img:'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=400&q=75&fit=crop&crop=face'},
+  {id:8,style:'mood',label:'城市夜景08',desc:'霓虹暗调',bg:'linear-gradient(135deg,#1a0a2e,#3d0a4a)',
+   img:'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400&q=75&fit=crop&crop=face'},
+  // 清新写真
+  {id:9,style:'portrait',label:'樱花写真01',desc:'粉嫩少女感',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)',
+   img:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=75&fit=crop&crop=face'},
+  {id:10,style:'portrait',label:'自然写真02',desc:'清新自然光',bg:'linear-gradient(135deg,#d4efdf,#a9cce3)',
+   img:'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=75&fit=crop&crop=face'},
+  {id:11,style:'portrait',label:'阳光系列03',desc:'明亮温暖',bg:'linear-gradient(135deg,#fff9c4,#ffecb3)',
+   img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=75&fit=crop&crop=face'},
+  {id:12,style:'portrait',label:'花园写真04',desc:'唯美花园',bg:'linear-gradient(135deg,#f8bbd0,#e1bee7)',
+   img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=75&fit=crop&crop=face'},
+  {id:13,style:'portrait',label:'蓝调清新05',desc:'清爽蓝调',bg:'linear-gradient(135deg,#bbdefb,#b2ebf2)',
+   img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=75&fit=crop&crop=face'},
+  {id:14,style:'portrait',label:'森系写真06',desc:'绿意盎然',bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',
+   img:'https://images.unsplash.com/photo-1495385794356-15371f348c31?w=400&q=75&fit=crop&crop=face'},
+  {id:15,style:'portrait',label:'白纱写真07',desc:'纯净白调',bg:'linear-gradient(135deg,#f5f5f5,#e0e0e0)',
+   img:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=400&q=75&fit=crop&crop=face'},
+  {id:16,style:'portrait',label:'秋意写真08',desc:'秋日暖色',bg:'linear-gradient(135deg,#ffe0b2,#ffcc80)',
+   img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=75&fit=crop&crop=face'},
+  // 情侣写真
+  {id:17,style:'couple',label:'浪漫约会01',desc:'甜蜜浪漫',bg:'linear-gradient(135deg,#a18cd1,#fbc2eb)',
+   img:'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=400&q=75&fit=crop'},
+  {id:18,style:'couple',label:'纪念日02',desc:'珍贵时刻',bg:'linear-gradient(135deg,#ffdde1,#ee9ca7)',
+   img:'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&q=75&fit=crop'},
+  {id:19,style:'couple',label:'告白系列03',desc:'心动瞬间',bg:'linear-gradient(135deg,#f093fb,#f5576c)',
+   img:'https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=400&q=75&fit=crop'},
+  {id:20,style:'couple',label:'夕阳情侣04',desc:'黄昏浪漫',bg:'linear-gradient(135deg,#f7797d,#fbd786)',
+   img:'https://images.unsplash.com/photo-1523292562811-8fa7962a78c8?w=400&q=75&fit=crop'},
+  {id:21,style:'couple',label:'街拍情侣05',desc:'城市漫步',bg:'linear-gradient(135deg,#c9d6ff,#e2e2e2)',
+   img:'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400&q=75&fit=crop'},
+  {id:22,style:'couple',label:'花海情侣06',desc:'花海浪漫',bg:'linear-gradient(135deg,#f8c8d4,#e8a0b0)',
+   img:'https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=400&q=75&fit=crop'},
+  {id:23,style:'couple',label:'咖啡暖意07',desc:'日常温情',bg:'linear-gradient(135deg,#d4a373,#a0785a)',
+   img:'https://images.unsplash.com/photo-1529516548873-9ce57c8f155e?w=400&q=75&fit=crop'},
+  {id:24,style:'couple',label:'冬日情侣08',desc:'冬日浪漫',bg:'linear-gradient(135deg,#e8f4fd,#c5dff0)',
+   img:'https://images.unsplash.com/photo-1544717305-996b815c338c?w=400&q=75&fit=crop'},
+  // 旅拍写真
+  {id:25,style:'travel',label:'城市旅拍01',desc:'都市街拍',bg:'linear-gradient(135deg,#2bc0e4,#eaecc6)',
+   img:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=75&fit=crop'},
+  {id:26,style:'travel',label:'山野旅拍02',desc:'自然户外',bg:'linear-gradient(135deg,#4ca1af,#c4e0e5)',
+   img:'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=400&q=75&fit=crop'},
+  {id:27,style:'travel',label:'海边旅拍03',desc:'海风自由',bg:'linear-gradient(135deg,#0099f7,#c6e8fa)',
+   img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=75&fit=crop'},
+  {id:28,style:'travel',label:'建筑旅拍04',desc:'城市建筑',bg:'linear-gradient(135deg,#bdc3c7,#2c3e50)',
+   img:'https://images.unsplash.com/photo-1499856871958-5b9357976b82?w=400&q=75&fit=crop'},
+  {id:29,style:'travel',label:'古镇旅拍05',desc:'人文古典',bg:'linear-gradient(135deg,#c9a96e,#7a5c3a)',
+   img:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=75&fit=crop'},
+  {id:30,style:'travel',label:'沙漠旅拍06',desc:'荒野大漠',bg:'linear-gradient(135deg,#e8d5a3,#c4a35a)',
+   img:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=75&fit=crop'},
+  {id:31,style:'travel',label:'雪山旅拍07',desc:'冰雪世界',bg:'linear-gradient(135deg,#e8f4fd,#a8d5f0)',
+   img:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=75&fit=crop'},
+  {id:32,style:'travel',label:'丛林旅拍08',desc:'热带绿意',bg:'linear-gradient(135deg,#2d5a27,#4a8a3d)',
+   img:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=75&fit=crop'},
+  // 儿童写真
+  {id:33,style:'child',label:'气球派对01',desc:'欢乐童年',bg:'linear-gradient(135deg,#f6d365,#fda085)',
+   img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&q=75&fit=crop&crop=face'},
+  {id:34,style:'child',label:'彩虹宝宝02',desc:'色彩缤纷',bg:'linear-gradient(135deg,#a8edea,#fed6e3)',
+   img:'https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=400&q=75&fit=crop&crop=face'},
+  {id:35,style:'child',label:'玩具世界03',desc:'纯真年代',bg:'linear-gradient(135deg,#ffeaa7,#dfe6e9)',
+   img:'https://images.unsplash.com/photo-1488751045188-3c55bbf9a3fa?w=400&q=75&fit=crop&crop=face'},
+  {id:36,style:'child',label:'梦幻童话04',desc:'童话世界',bg:'linear-gradient(135deg,#e0c3fc,#8ec5fc)',
+   img:'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400&q=75&fit=crop&crop=face'},
+  {id:37,style:'child',label:'草地奔跑05',desc:'自然户外',bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',
+   img:'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=400&q=75&fit=crop&crop=face'},
+  {id:38,style:'child',label:'百日宝宝06',desc:'成长纪念',bg:'linear-gradient(135deg,#fff9c4,#ffecb3)',
+   img:'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&q=75&fit=crop&crop=face'},
+  {id:39,style:'child',label:'节日欢庆07',desc:'节日主题',bg:'linear-gradient(135deg,#ff9a9e,#fad0c4)',
+   img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75&fit=crop&crop=face'},
+  {id:40,style:'child',label:'亲子时光08',desc:'家庭温情',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)',
+   img:'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=400&q=75&fit=crop'},
+  // 复古胶片
+  {id:41,style:'vintage',label:'复古胶片01',desc:'70年代质感',bg:'linear-gradient(135deg,#d4a574,#8b6f47)',
+   img:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=75&fit=crop&crop=face'},
+  {id:42,style:'vintage',label:'老上海02',desc:'民国风情',bg:'linear-gradient(135deg,#8b6f47,#4a3728)',
+   img:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&q=75&fit=crop&crop=face'},
+  {id:43,style:'vintage',label:'年代记忆03',desc:'复古怀旧',bg:'linear-gradient(135deg,#c9a96e,#6b4c2a)',
+   img:'https://images.unsplash.com/photo-1520785643438-5bf77931f493?w=400&q=75&fit=crop&crop=face'},
+  {id:44,style:'vintage',label:'油画质感04',desc:'艺术油画',bg:'linear-gradient(135deg,#b8860b,#8b4513)',
+   img:'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&q=75&fit=crop&crop=face'},
+  {id:45,style:'vintage',label:'胶片街拍05',desc:'城市记忆',bg:'linear-gradient(135deg,#9e8970,#6b5a45)',
+   img:'https://images.unsplash.com/photo-1502033026069-10f4e7d6b950?w=400&q=75&fit=crop&crop=face'},
+  {id:46,style:'vintage',label:'复古婚纱06',desc:'岁月美好',bg:'linear-gradient(135deg,#f5e6d3,#e8c9a0)',
+   img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75&fit=crop'},
+  {id:47,style:'vintage',label:'黑白经典07',desc:'永恒黑白',bg:'linear-gradient(135deg,#555,#222)',
+   img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=75&fit=crop&sat=-100'},
+  {id:48,style:'vintage',label:'胶片人像08',desc:'温暖颗粒',bg:'linear-gradient(135deg,#d4956a,#8b5e3c)',
+   img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=75&fit=crop&crop=face'}
+];
+
+let curFilter = 'all';
+let curManageTab = 'mood';
+
+// ══ INDEXEDDB ══
+const DB_NAME = 'RightMomentDB', STORE = 'imgs';
+let _db = null;
+let _cache = null; // memory cache
+
+function openDB() {
+  return new Promise((res, rej) => {
+    if (_db) { res(_db); return; }
+    const r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+    r.onsuccess = e => { _db = e.target.result; res(_db); };
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbGetAll() {
+  const d = await openDB();
+  return new Promise(res => {
+    const out = {};
+    const tx = d.transaction(STORE,'readonly');
+    const req = tx.objectStore(STORE).openCursor();
+    req.onsuccess = e => {
+      const c = e.target.result;
+      if (c) { out[c.key] = c.value; c.continue(); } else res(out);
+    };
+    req.onerror = () => res({});
+  });
+}
+async function dbSet(key, val) {
+  const d = await openDB();
+  return new Promise(res => {
+    const tx = d.transaction(STORE,'readwrite');
+    tx.objectStore(STORE).put(val, String(key));
+    tx.oncomplete = res; tx.onerror = res;
+  });
+}
+async function dbDel(key) {
+  const d = await openDB();
+  return new Promise(res => {
+    const tx = d.transaction(STORE,'readwrite');
+    tx.objectStore(STORE).delete(String(key));
+    tx.oncomplete = res; tx.onerror = res;
+  });
+}
+async function getCache() {
+  if (!_cache) _cache = await dbGetAll();
+  return _cache;
+}
+async function saveImg(id, dataUrl) {
+  await dbSet(id, dataUrl);
+  if (_cache) _cache[String(id)] = dataUrl;
+}
+async function delImg(id) {
+  await dbDel(id);
+  if (_cache) delete _cache[String(id)];
+}
+async function clearStyleImgs(style) {
+  for (const s of SAMPLES.filter(x => x.style === style)) await delImg(s.id);
+}
+async function getImg(id) {
+  const c = await getCache();
+  return c[String(id)] || null;
+}
+
+// ══ RENDER STYLE CARDS ══
+function renderStyleCards() {
+  const g = S.gender || 'female';
+  const imgs = STYLE_IMGS[g];
+  document.getElementById('styleGrid').innerHTML = STYLE_META.map(m => `
+    <div class="style-card${S.styles.includes(m.key)?' selected':''}"
+         onclick="selectStyle('${m.key}',this)" data-style="${m.key}">
+      <div class="style-thumb" style="background:${m.fb}">
+        <img src="${imgs[m.key]}" alt="${m.name}"
+             onerror="this.style.display='none'" loading="lazy">
+      </div>
+      <div class="style-badge ${m.badgeCls}">${m.badge}</div>
+      <div class="style-check">✓</div>
+      <div class="style-info">
+        <div class="style-name">${m.name}</div>
+        <div class="style-desc">${m.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ══ RENDER SAMPLES ══
+async function renderSamples(filter) {
+  const list = filter === 'all' ? SAMPLES : SAMPLES.filter(s => s.style === filter);
+  document.getElementById('galleryCount').textContent = list.length + ' 张';
+  const cache = await getCache();
+  document.getElementById('sampleGrid').innerHTML = list.map(s => {
+    const custom = cache[String(s.id)];
+    const src = custom || s.img;
+    const liked = S.liked.includes(s.id);
+    return `<div class="sample-item${liked?' liked':''}" id="si-${s.id}" onclick="openLightbox(${s.id})">
+      <div class="sample-thumb" style="background:${s.bg}">
+        ${src ? `<img src="${src}" alt="${s.label}" loading="lazy">` :
+                `<div class="sample-thumb-fallback">📷</div>`}
+      </div>
+      <button class="sample-fav" onclick="doToggleLike(event,${s.id})">${liked?'❤️':'🤍'}</button>
+    </div>`;
+  }).join('');
+}
+
+function filterSamples(filter, btn) {
+  curFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  renderSamples(filter);
+}
+
+// ══ LIGHTBOX ══
+async function openLightbox(id) {
+  const item = SAMPLES.find(s => s.id === id);
+  S.lbItem = item;
+  const custom = await getImg(id);
+  const src = custom || item.img;
+  const box = document.getElementById('lbImg');
+  box.style.background = item.bg;
+  box.innerHTML = src
+    ? `<img src="${src}" alt="${item.label}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
+    : `<span style="position:relative;z-index:1;font-size:64px">📷</span>`;
+  document.getElementById('lbTitle').textContent = item.label;
+  document.getElementById('lbSub').textContent = STYLE_NAMES[item.style] + ' · ' + item.desc;
+  updateLbBtn(id);
+  document.getElementById('lightbox').classList.add('open');
+}
+function updateLbBtn(id) {
+  document.getElementById('lbLikeBtn').textContent =
+    S.liked.includes(id) ? '💔 取消收藏' : '❤️ 收藏此样片';
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function toggleLikeFromLightbox() {
+  if (S.lbItem) { doToggleLike(null, S.lbItem.id); updateLbBtn(S.lbItem.id); }
+}
+
+// ══ LIKE ══
+async function doToggleLike(e, id) {
+  if (e) e.stopPropagation();
+  const idx = S.liked.indexOf(id);
+  if (idx === -1) S.liked.push(id); else S.liked.splice(idx,1);
+  // update grid item
+  const el = document.getElementById('si-'+id);
+  if (el) {
+    el.classList.toggle('liked', S.liked.includes(id));
+    const btn = el.querySelector('.sample-fav');
+    if (btn) btn.textContent = S.liked.includes(id) ? '❤️' : '🤍';
+  }
+  await refreshLikedBar();
+}
+
+async function refreshLikedBar() {
+  const n = S.liked.length;
+  document.getElementById('likedCount').textContent = n;
+  const bar = document.getElementById('likedBar');
+  bar.classList.toggle('visible', n > 0 && S.page === 3);
+  const cache = await getCache();
+  document.getElementById('likedThumbs').innerHTML = S.liked.map(id => {
+    const s = SAMPLES.find(x => x.id === id);
+    const src = cache[String(id)] || s.img;
+    return `<div class="liked-thumb" style="background:${s.bg}">
+      ${src ? `<img src="${src}" alt="">` : ''}
+      <button class="liked-thumb-remove" onclick="doToggleLike(null,${id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ══ SELECTIONS ══
+function selectGender(g, el) {
+  S.gender = g;
+  document.querySelectorAll('.gender-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectAge(a, el) {
+  S.age = a;
+  document.querySelectorAll('.age-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectStyle(key, el) {
+  const idx = S.styles.indexOf(key);
+  if (idx === -1) S.styles.push(key); else S.styles.splice(idx,1);
+  document.querySelectorAll(`[data-style="${key}"]`).forEach(c =>
+    c.classList.toggle('selected', S.styles.includes(key)));
+}
+function selectDate(d, el) {
+  S.date = d;
+  document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ══ NAVIGATION ══
+async function goToPage(n) {
+  if (n === 2 && !S.gender) { alert('请先选择性别 😊'); return; }
+  if (n === 3 && S.styles.length === 0) { alert('请至少选择一种拍摄风格 📸'); return; }
+
+  for (let i = 1; i <= 5; i++) {
+    const p = document.getElementById('page'+i);
+    if (p) p.classList.add('hidden');
+  }
+  const pg = document.getElementById('page'+n);
+  if (pg) pg.classList.remove('hidden');
+  S.page = n;
+
+  // update progress
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('s'+i);
+    if (!el) continue;
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+  document.getElementById('heroSection').style.display = n === 1 ? '' : 'none';
+  document.getElementById('progressBar').style.display = n === 5 ? 'none' : '';
+  document.getElementById('ownerFab').style.display = n === 5 ? 'none' : '';
+  document.getElementById('likedBar').classList.remove('visible');
+
+  if (n === 2) renderStyleCards();
+  if (n === 3) { await renderSamples(curFilter); await refreshLikedBar(); }
+  if (n === 4) await buildSummary();
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function buildSummary() {
+  document.getElementById('sumStyles').textContent =
+    S.styles.map(k => STYLE_NAMES[k]).join('、') || '未选择';
+  document.getElementById('sumCount').textContent = S.liked.length;
+  const cache = await getCache();
+  if (S.liked.length === 0) {
+    document.getElementById('sumThumbs').innerHTML =
+      '<span style="font-size:12px;color:var(--warm-gray)">未收藏样片</span>';
+  } else {
+    document.getElementById('sumThumbs').innerHTML = S.liked.map(id => {
+      const s = SAMPLES.find(x => x.id === id);
+      const src = cache[String(id)] || s.img;
+      return `<div class="summary-thumb" style="background:${s.bg}">
+        ${src ? `<img src="${src}" alt="">` : ''}
+      </div>`;
+    }).join('');
+  }
+}
+
+// ══ SUBMIT ══
+async function submitForm() {
+  const name = document.getElementById('inputName').value.trim();
+  const phone = document.getElementById('inputPhone').value.trim();
+  if (!name) { alert('请填写姓名 😊'); return; }
+  if (!phone || !/^1[3-9]\d{9}$/.test(phone)) { alert('请填写正确的手机号 📱'); return; }
+
+  const likedDetail = S.liked.map(id => {
+    const s = SAMPLES.find(x => x.id === id);
+    return s ? `[${STYLE_NAMES[s.style]}] ${s.label}` : id;
+  }).join(' | ');
+
+  const payload = {
+    姓名: name, 手机号: phone,
+    性别: GENDER_MAP[S.gender] || '未选',
+    年龄段: AGE_MAP[S.age] || '未选',
+    风格偏好: S.styles.map(k => STYLE_NAMES[k]).join('、') || '未选',
+    期望日期: S.date || '待商议',
+    收藏样片: S.liked.length + ' 张',
+    样片明细: likedDetail || '无',
+    备注: document.getElementById('inputNote').value.trim() || '无'
+  };
+
+  const statusEl = document.getElementById('submitStatus');
+  const btn = document.getElementById('submitBtn');
+
+  btn.disabled = true;
+  statusEl.className = 'submit-status status-sending show';
+  statusEl.textContent = '⏳ 提交中，请稍候...';
+
+  try {
+    const res = await fetch(FORMSPREE, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      showSuccess(payload);
+    } else {
+      throw new Error('server error');
+    }
+  } catch(err) {
+    statusEl.className = 'submit-status status-error show';
+    statusEl.textContent = '⚠️ 提交失败，请检查网络后重试，或直接拨打门店电话预约。';
+    btn.disabled = false;
+  }
+}
+
+function showSuccess(payload) {
+  document.getElementById('successCard').innerHTML =
+    Object.entries(payload).map(([k,v]) =>
+      `<div class="success-row"><span>${k}</span><span>${v}</span></div>`
+    ).join('');
+  goToPage(5);
+}
+
+function restartFlow() {
+  S.gender=null; S.age=null; S.styles=[]; S.liked=[]; S.date=null;
+  document.querySelectorAll('.gender-card,.age-chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('inputName').value='';
+  document.getElementById('inputPhone').value='';
+  document.getElementById('inputNote').value='';
+  document.getElementById('submitStatus').className='submit-status';
+  document.getElementById('submitBtn').disabled=false;
+  goToPage(1);
+}
+
+// ══ OWNER PANEL ══
+async function openOwnerPanel() {
+  document.getElementById('ownerModal').classList.add('open');
+  await renderManageGrid(curManageTab);
+}
+async function closeOwnerPanel() {
+  document.getElementById('ownerModal').classList.remove('open');
+  hideResetConfirm();
+  if (S.page === 3) await renderSamples(curFilter);
+}
+document.getElementById('ownerModal').addEventListener('click', function(e){
+  if (e.target === this) closeOwnerPanel();
+});
+
+async function switchManageTab(style, el) {
+  curManageTab = style;
+  document.querySelectorAll('.manage-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  hideResetConfirm();
+  await renderManageGrid(style);
+}
+
+async function renderManageGrid(style) {
+  const items = SAMPLES.filter(s => s.style === style);
+  const cache = await getCache();
+  document.getElementById('manageGrid').innerHTML = items.map(s => {
+    const custom = cache[String(s.id)];
+    const src = custom || s.img;
+    return `<div class="manage-item" onclick="openManageItem(${s.id})">
+      <div class="manage-item-inner" style="width:100%;height:100%;background:${s.bg}">
+        ${src ? `<img src="${src}" alt="${s.label}" loading="lazy" ${custom?'':'style="opacity:.55"'}>` : ''}
+      </div>
+      <div class="manage-overlay">
+        <div class="manage-item-label">${s.label}${custom?' ✅':''}</div>
+        ${custom ? `<button class="manage-del" onclick="event.stopPropagation();delCustomImg(${s.id})">删除</button>` :
+                   `<div style="font-size:10px;color:rgba(255,255,255,.8)">默认图</div>`}
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('uploadInput').dataset.style = style;
+}
+
+function openManageItem(id) {
+  // On mobile, tapping shows overlay; tapping upload replaces image
+  const el = document.getElementById('uploadInput');
+  el.dataset.targetId = id;
+  el.click();
+}
+
+async function delCustomImg(id) {
+  await delImg(id);
+  await renderManageGrid(curManageTab);
+}
+
+async function handleUpload(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  const targetId = event.target.dataset.targetId;
+  const style = event.target.dataset.style || curManageTab;
+  const items = SAMPLES.filter(s => s.style === style);
+  const cache = await getCache();
+
+  document.getElementById('manageGrid').insertAdjacentHTML('beforeend',
+    '<div style="grid-column:1/-1;text-align:center;padding:12px;font-size:12px;color:var(--warm-gray)">⏳ 上传中...</div>');
+
+  if (targetId) {
+    // Single slot replacement from tapping an item
+    const file = files[0];
+    await new Promise(res => {
+      const reader = new FileReader();
+      reader.onload = async e => { await saveImg(Number(targetId), e.target.result); res(); };
+      reader.readAsDataURL(file);
+    });
+  } else {
+    const emptySlots = items.filter(s => !cache[String(s.id)]);
+    await Promise.all(files.map((file, i) => new Promise(res => {
+      const reader = new FileReader();
+      reader.onload = async e => {
+        const target = emptySlots[i] || items[i % items.length];
+        if (target) await saveImg(target.id, e.target.result);
+        res();
+      };
+      reader.readAsDataURL(file);
+    })));
+  }
+
+  event.target.value = '';
+  delete event.target.dataset.targetId;
+  await renderManageGrid(style);
+}
+
+function showResetConfirm() {
+  document.getElementById('resetTabName').textContent = STYLE_NAMES[curManageTab];
+  document.getElementById('resetConfirm').classList.remove('hidden');
+}
+function hideResetConfirm() {
+  document.getElementById('resetConfirm').classList.add('hidden');
+}
+async function doReset() {
+  await clearStyleImgs(curManageTab);
+  hideResetConfirm();
+  await renderManageGrid(curManageTab);
+}
+
+// ══ INIT ══
+(async function init() {
+  // warm up IndexedDB
+  await getCache();
+
+  // ── iOS Safari 兼容：FastClick 式修复，消除 300ms 延迟 ──
+  // iOS 13+ 已默认消除延迟，但旧版 Safari 需要 touch 监听
+  if (/iP(hone|ad|od)/i.test(navigator.userAgent)) {
+    document.addEventListener('touchstart', function(){}, {passive:true});
+  }
+
+  // ── iOS "添加到主屏幕" 提示（仅在 Safari 独立模式外显示一次）──
+  const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && isSafari && !isStandalone && !sessionStorage.getItem('pwa-hint-shown')) {
+    sessionStorage.setItem('pwa-hint-shown', '1');
+    const hint = document.createElement('div');
+    hint.style.cssText = `
+      position:fixed;bottom:0;left:0;right:0;z-index:9998;
+      background:#1C1917;color:#fff;padding:14px 20px 28px;
+      font-size:13px;line-height:1.7;text-align:center;
+      border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.3);
+    `;
+    hint.innerHTML = `
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">📱 添加到主屏幕</div>
+      <div style="color:rgba(255,255,255,.75)">点击底部 <b style="color:#fff">分享</b> 按钮 → 选择「<b style="color:#fff">添加到主屏幕</b>」<br>即可像 App 一样使用本页面</div>
+      <button onclick="this.parentNode.remove()" style="
+        margin-top:12px;padding:8px 28px;border-radius:100px;border:1.5px solid rgba(255,255,255,.4);
+        background:transparent;color:#fff;font-size:13px;cursor:pointer;
+      ">知道了</button>
+    `;
+    document.body.appendChild(hint);
+  }
+})();
+</script>
+</body>
+</html>
