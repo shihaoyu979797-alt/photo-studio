@@ -5,58 +5,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Right Moment">
+<meta name="apple-mobile-web-app-title" content="Right Moment 预约">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- 防止 iOS 自动识别电话号码/邮件变成链接 -->
 <meta name="format-detection" content="telephone=no,email=no,address=no">
-<!-- 让微信内置浏览器以标准模式渲染 -->
 <meta http-equiv="Cache-Control" content="no-transform">
-<title>Right Moment · 在线选片</title>
+<title>Right Moment · 预约系统</title>
 <style>
-/* 内联字体回退：iOS/Android 系统字体，无需网络 */
+/* ══ 字体 ══ */
 :root {
-  --font-serif: Georgia, 'Times New Roman', 'Songti SC', 'SimSun', serif;
-  --font-display: Georgia, 'Times New Roman', serif;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-serif: Georgia,'Times New Roman','Songti SC',serif;
+  --font-display: Georgia,'Times New Roman',serif;
+  --font-sans: -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
 }
-</style>
-<style>
-:root {
-  --cream:#F7F3EE; --warm-white:#FDFAF6; --charcoal:#1C1917;
-  --warm-gray:#78716C; --light-gray:#E8E0D8; --accent:#B8860B;
-  --accent-light:#D4A843; --rose:#C17B6F; --sage:#7A9E7E; --ink:#2D2520;
+
+/* ══ 主题变量 · 暖金（默认） ══ */
+:root, [data-theme="warm"] {
+  --bg:       #F7F3EE;
+  --bg2:      #FDFAF6;
+  --charcoal: #1C1917;
+  --warm-gray:#78716C;
+  --light-gray:#E8E0D8;
+  --accent:   #B8860B;
+  --accent-l: #D4A843;
+  --rose:     #C17B6F;
+  --sage:     #7A9E7E;
+  --ink:      #2D2520;
+  --hero-grad:linear-gradient(180deg,#EDE7DC,#F7F3EE);
+  --card-bdr: 1px solid #E8E0D8;
+  --shadow:   0 4px 16px rgba(184,134,11,.25);
+  --glow:     rgba(184,134,11,.12);
 }
+
+/* ══ 主题 · 深夜暗调 ══ */
+[data-theme="dark"] {
+  --bg:       #0F0E0C;
+  --bg2:      #1A1916;
+  --charcoal: #F0EDE8;
+  --warm-gray:#9E9890;
+  --light-gray:#2E2C28;
+  --accent:   #C9A227;
+  --accent-l: #E8C060;
+  --rose:     #D4756A;
+  --sage:     #6A9E70;
+  --ink:      #F5F0EA;
+  --hero-grad:linear-gradient(180deg,#1A1512,#0F0E0C);
+  --card-bdr: 1px solid #2E2C28;
+  --shadow:   0 4px 20px rgba(0,0,0,.5);
+  --glow:     rgba(201,162,39,.15);
+}
+
+/* ══ 主题 · 清新简约 ══ */
+[data-theme="fresh"] {
+  --bg:       #F0F6FF;
+  --bg2:      #FFFFFF;
+  --charcoal: #1A2840;
+  --warm-gray:#6B7A9A;
+  --light-gray:#D8E4F4;
+  --accent:   #4A7EC7;
+  --accent-l: #6A9DE0;
+  --rose:     #E07080;
+  --sage:     #52A878;
+  --ink:      #0F1E35;
+  --hero-grad:linear-gradient(180deg,#DDE9FA,#F0F6FF);
+  --card-bdr: 1px solid #D8E4F4;
+  --shadow:   0 4px 16px rgba(74,126,199,.2);
+  --glow:     rgba(74,126,199,.1);
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;overflow-x:hidden}
-body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);min-height:100vh}
+body{background:var(--bg);color:var(--charcoal);font-family:var(--font-sans);min-height:100vh;transition:background .3s,color .3s}
 
-/* 颗粒层：pointer-events:none 确保不拦截点击 */
-.grain-overlay{
-  position:fixed;inset:0;pointer-events:none !important;z-index:0;opacity:.18;
+/* ══ 颗粒层 ══ */
+.grain-overlay{position:fixed;inset:0;pointer-events:none!important;z-index:0;opacity:.14;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-  touch-action:none;
-}
+  touch-action:none}
 
-/* HERO */
-.hero{position:relative;padding:52px 24px 40px;text-align:center;
-  background:linear-gradient(180deg,#EDE7DC,var(--cream));border-bottom:1px solid var(--light-gray);overflow:hidden}
+/* ══ HERO ══ */
+.hero{position:relative;padding:48px 24px 36px;text-align:center;
+  background:var(--hero-grad);border-bottom:var(--card-bdr);overflow:hidden;user-select:none}
 .hero-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
   width:300px;height:300px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(184,134,11,.12),transparent 70%)}
+  background:radial-gradient(circle,var(--glow),transparent 70%)}
 .studio-en{font-family:var(--font-display);font-size:clamp(26px,7vw,38px);
   font-weight:600;letter-spacing:.06em;color:var(--ink);margin-bottom:4px}
 .studio-en em{font-style:italic;color:var(--accent)}
-.studio-cn{font-size:13px;letter-spacing:.4em;color:var(--warm-gray);margin-bottom:22px}
-.hero-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px}
+.studio-cn{font-size:13px;letter-spacing:.4em;color:var(--warm-gray);margin-bottom:20px}
+.hero-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px}
 .hero-divider::before,.hero-divider::after{content:'';flex:1;max-width:72px;height:1px;
   background:linear-gradient(90deg,transparent,var(--accent),transparent)}
 .hero-divider span{font-size:16px;color:var(--accent)}
-.hero-desc{font-size:12px;color:var(--warm-gray);line-height:1.8;max-width:320px;margin:0 auto}
+.hero-desc{font-size:12px;color:var(--warm-gray);line-height:1.8;max-width:320px;margin:0 auto 16px}
+/* 查询预约按钮 */
+.query-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;
+  border-radius:100px;border:1.5px solid var(--accent);color:var(--accent);
+  background:transparent;font-size:12px;font-family:var(--font-sans);cursor:pointer;
+  transition:all .2s;-webkit-tap-highlight-color:transparent;letter-spacing:.05em}
+.query-btn:active{background:var(--accent);color:#fff}
 
-/* PROGRESS */
+/* ══ PROGRESS ══ */
 .progress-wrap{display:flex;align-items:center;justify-content:center;
-  padding:16px 20px;background:var(--warm-white);border-bottom:1px solid var(--light-gray);
-  position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+  padding:14px 20px;background:var(--bg2);border-bottom:var(--card-bdr);
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.06);transition:background .3s}
 .step-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--warm-gray);
   letter-spacing:.05em;transition:color .3s}
 .step-item.active{color:var(--accent);font-weight:500}
@@ -68,13 +118,13 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 .step-item.done .step-circle{background:var(--sage);color:#fff;border-color:var(--sage)}
 .step-line{width:24px;height:1px;background:var(--light-gray);margin:0 3px}
 
-/* SECTION */
+/* ══ SECTION ══ */
 .section{padding:28px 20px;animation:fadeUp .4s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .section-title{font-family:var(--font-display);font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px}
 .section-sub{font-size:12px;color:var(--warm-gray);letter-spacing:.05em;margin-bottom:20px}
 
-/* GENDER */
+/* ══ GENDER ══ */
 .gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gender-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/4;
   cursor:pointer;border:2px solid transparent;transition:all .3s cubic-bezier(.34,1.56,.64,1);
@@ -94,16 +144,16 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
   pointer-events:none}
 .gender-card.selected .gender-check{opacity:1;transform:scale(1)}
 
-/* AGE CHIPS */
+/* ══ AGE CHIPS ══ */
 .age-chips{display:flex;flex-wrap:wrap;gap:10px}
 .age-chip{padding:9px 18px;border-radius:100px;border:1.5px solid var(--light-gray);
-  font-size:13px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  font-size:13px;color:var(--warm-gray);cursor:pointer;background:var(--bg2);
   transition:all .25s;user-select:none;-webkit-tap-highlight-color:transparent}
 .age-chip:active{transform:scale(.95)}
 .age-chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;
-  box-shadow:0 4px 12px rgba(184,134,11,.3)}
+  box-shadow:var(--shadow)}
 
-/* STYLE GRID */
+/* ══ STYLE GRID ══ */
 .style-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .style-card{border-radius:12px;overflow:hidden;border:2px solid transparent;
   cursor:pointer;position:relative;transition:all .3s cubic-bezier(.34,1.56,.64,1);
@@ -114,7 +164,7 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 .style-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   object-position:top;transition:transform .4s ease;display:block}
 .style-card:active .style-thumb img{transform:scale(1.04)}
-.style-info{padding:10px 12px;background:var(--warm-white);border-top:1px solid var(--light-gray)}
+.style-info{padding:10px 12px;background:var(--bg2);border-top:var(--card-bdr);transition:background .3s}
 .style-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
 .style-desc{font-size:11px;color:var(--warm-gray)}
 .style-badge{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.92);
@@ -129,17 +179,22 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 .tag-popular{background:rgba(255,255,255,.92);color:var(--accent)}
 .tag-new{background:rgba(255,255,255,.92);color:var(--sage)}
 
-/* BTN common */
+/* ══ BTN common ══ */
 .btn-primary{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;
   border-radius:10px;font-size:14px;font-family:var(--font-sans);cursor:pointer;
-  letter-spacing:.05em;box-shadow:0 4px 16px rgba(184,134,11,.4);transition:opacity .2s;
+  letter-spacing:.05em;box-shadow:var(--shadow);transition:opacity .2s;
   -webkit-tap-highlight-color:transparent}
 .btn-primary:active{opacity:.85}
 .btn-secondary{padding:13px;border:1.5px solid var(--light-gray);background:transparent;
   border-radius:10px;font-size:13px;font-family:var(--font-sans);cursor:pointer;
   color:var(--warm-gray);transition:all .2s;-webkit-tap-highlight-color:transparent}
 
-/* SAMPLE GRID */
+/* ══ SKELETON（骨架屏加载占位） ══ */
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.skeleton{background:linear-gradient(90deg,var(--light-gray) 25%,var(--bg2) 50%,var(--light-gray) 75%);
+  background-size:800px 100%;animation:shimmer 1.4s infinite linear}
+
+/* ══ SAMPLE GRID ══ */
 .gallery-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .gallery-count{font-size:11px;color:var(--warm-gray);background:var(--light-gray);
   padding:3px 10px;border-radius:100px}
@@ -147,16 +202,18 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
   scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .filter-tabs::-webkit-scrollbar{display:none}
 .filter-tab{padding:8px 14px;border-radius:8px;border:1.5px solid var(--light-gray);
-  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--bg2);
   white-space:nowrap;transition:all .2s;user-select:none;flex-shrink:0;
   -webkit-tap-highlight-color:transparent}
 .filter-tab.selected{background:var(--accent);border-color:var(--accent);color:#fff}
 .sample-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .sample-item{aspect-ratio:2/3;border-radius:8px;overflow:hidden;cursor:pointer;
-  position:relative;background:#ddd;-webkit-tap-highlight-color:transparent}
+  position:relative;background:var(--light-gray);-webkit-tap-highlight-color:transparent}
 .sample-item:active{opacity:.85}
 .sample-thumb{width:100%;height:100%;position:relative}
-.sample-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.sample-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  opacity:0;transition:opacity .4s ease}
+.sample-thumb img.loaded{opacity:1}
 .sample-thumb-fallback{position:absolute;inset:0;display:flex;align-items:center;
   justify-content:center;font-size:28px}
 .sample-fav{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;
@@ -165,8 +222,8 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
   opacity:1;transition:opacity .2s;-webkit-tap-highlight-color:transparent}
 .sample-item.liked .sample-fav{background:var(--rose);color:#fff}
 
-/* LIGHTBOX */
-.lightbox{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.92);
+/* ══ LIGHTBOX ══ */
+.lightbox{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.93);
   display:flex;align-items:center;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .3s}
 .lightbox.open{opacity:1;pointer-events:all}
@@ -175,7 +232,9 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 .lightbox.open .lightbox-inner{transform:scale(1)}
 .lightbox-img{width:100%;aspect-ratio:2/3;border-radius:12px;overflow:hidden;
   position:relative;background:#333;margin-bottom:14px}
-.lightbox-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lightbox-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .3s}
+.lightbox-img img.loaded{opacity:1}
 .lightbox-meta{color:#fff;text-align:center;margin-bottom:14px}
 .lightbox-title{font-size:15px;margin-bottom:3px}
 .lightbox-sub{font-size:12px;opacity:.6}
@@ -190,9 +249,9 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
   display:flex;align-items:center;justify-content:center;z-index:10;
   -webkit-tap-highlight-color:transparent}
 
-/* LIKED BAR */
+/* ══ LIKED BAR ══ */
 .liked-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;
-  background:var(--warm-white);border-top:1px solid var(--light-gray);
+  background:var(--bg2);border-top:var(--card-bdr);
   padding:12px 20px 22px;transform:translateY(100%);
   transition:transform .4s cubic-bezier(.34,1.56,.64,1);
   box-shadow:0 -8px 32px rgba(0,0,0,.1)}
@@ -211,100 +270,145 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
   font-size:8px;cursor:pointer;border:none;z-index:3;-webkit-tap-highlight-color:transparent}
 .proceed-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;
   border-radius:10px;font-size:14px;font-family:var(--font-sans);cursor:pointer;
-  box-shadow:0 4px 16px rgba(184,134,11,.4);-webkit-tap-highlight-color:transparent}
+  box-shadow:var(--shadow);-webkit-tap-highlight-color:transparent}
 
-/* FORM */
-.form-card{background:var(--warm-white);border-radius:16px;padding:20px;
-  border:1px solid var(--light-gray);margin-bottom:16px}
+/* ══ FORM ══ */
+.form-card{background:var(--bg2);border-radius:16px;padding:20px;
+  border:var(--card-bdr);margin-bottom:16px;transition:background .3s}
 .form-row{margin-bottom:16px}
 .form-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--warm-gray);margin-bottom:8px;display:block}
 .form-input,.form-textarea{width:100%;padding:12px 14px;border:1.5px solid var(--light-gray);
   border-radius:8px;font-size:14px;font-family:var(--font-sans);
-  background:var(--cream);color:var(--ink);outline:none;transition:border-color .2s}
+  background:var(--bg);color:var(--ink);outline:none;transition:border-color .2s,background .3s}
 .form-input:focus,.form-textarea:focus{border-color:var(--accent);
   box-shadow:0 0 0 3px rgba(184,134,11,.1)}
 .form-textarea{min-height:80px;resize:none}
 .form-note{font-size:11px;color:var(--warm-gray);margin-top:6px;line-height:1.5}
 .date-chips{display:flex;flex-wrap:wrap;gap:8px}
 .date-chip{padding:8px 14px;border-radius:8px;border:1.5px solid var(--light-gray);
-  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--bg2);
   transition:all .2s;user-select:none;-webkit-tap-highlight-color:transparent}
 .date-chip.selected{background:var(--accent);border-color:var(--accent);color:#fff}
 
-/* SUMMARY */
+/* ══ SUMMARY ══ */
 .summary-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;
   color:var(--warm-gray);margin-bottom:6px}
 .summary-value{font-size:14px;color:var(--ink)}
 .summary-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .summary-thumb{width:44px;height:58px;border-radius:6px;position:relative;
-  overflow:hidden;border:1px solid var(--light-gray);background:#ddd}
+  overflow:hidden;border:var(--card-bdr);background:#ddd}
 .summary-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-/* STATUS */
+/* ══ STATUS ══ */
 .submit-status{padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;
   margin-bottom:12px;display:none}
 .submit-status.show{display:block}
 .status-sending{background:#EAF3FB;color:#0C447C;border:1px solid #90C3E8}
 .status-error{background:#FDEDED;color:#7A1F1F;border:1px solid #E8A0A0}
 
-/* SUBMIT BTN */
+/* ══ SUBMIT BTN ══ */
 .submit-btn{width:100%;padding:16px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-light));
+  background:linear-gradient(135deg,var(--accent),var(--accent-l));
   color:#fff;border:none;border-radius:12px;font-size:15px;
   font-family:var(--font-sans);cursor:pointer;letter-spacing:.05em;
-  box-shadow:0 6px 24px rgba(184,134,11,.4);transition:opacity .2s;
+  box-shadow:var(--shadow);transition:opacity .2s;
   -webkit-tap-highlight-color:transparent}
 .submit-btn:active{opacity:.85}
 .submit-btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* SUCCESS */
+/* ══ SUCCESS ══ */
 .success-page{min-height:80vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:40px 24px;text-align:center;
   animation:fadeUp .6s ease both}
 .success-icon{width:80px;height:80px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),var(--accent-light));
+  background:linear-gradient(135deg,var(--accent),var(--accent-l));
   display:flex;align-items:center;justify-content:center;font-size:36px;
-  margin:0 auto 24px;box-shadow:0 8px 32px rgba(184,134,11,.4)}
+  margin:0 auto 24px;box-shadow:var(--shadow)}
 .success-title{font-family:var(--font-display);font-size:24px;color:var(--ink);margin-bottom:8px}
 .success-sub{font-size:13px;color:var(--warm-gray);line-height:1.8;margin-bottom:24px}
-.success-card{background:var(--warm-white);border-radius:16px;padding:20px;
-  width:100%;max-width:340px;border:1px solid var(--light-gray);margin-bottom:20px;text-align:left}
+.success-card{background:var(--bg2);border-radius:16px;padding:20px;
+  width:100%;max-width:340px;border:var(--card-bdr);margin-bottom:20px;text-align:left;transition:background .3s}
 .success-row{display:flex;justify-content:space-between;align-items:flex-start;
-  padding:8px 0;border-bottom:1px solid var(--light-gray);font-size:13px;gap:8px}
+  padding:8px 0;border-bottom:var(--card-bdr);font-size:13px;gap:8px}
 .success-row:last-child{border-bottom:none}
 .success-row span:first-child{color:var(--warm-gray);flex-shrink:0}
 .success-row span:last-child{text-align:right;word-break:break-all;font-size:12px}
 .restart-btn{padding:12px 32px;border-radius:100px;border:1.5px solid var(--accent);
   color:var(--accent);background:transparent;font-size:13px;font-family:var(--font-sans);
-  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;margin-bottom:12px}
 .restart-btn:active{background:var(--accent);color:#fff}
+.query-link-btn{display:block;font-size:12px;color:var(--warm-gray);
+  background:transparent;border:none;cursor:pointer;margin-top:8px;
+  text-decoration:underline;text-underline-offset:3px;font-family:var(--font-sans)}
 
-/* OWNER FAB */
+/* ══ 预约查询弹窗 ══ */
+.query-modal{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(4px);display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;transition:opacity .3s}
+.query-modal.open{opacity:1;pointer-events:all}
+.query-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;
+  padding:20px 20px 40px;max-height:88vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.query-modal.open .query-sheet{transform:translateY(0)}
+.query-handle{width:40px;height:4px;background:var(--light-gray);border-radius:2px;margin:0 auto 20px}
+.query-title{font-family:var(--font-display);font-size:18px;color:var(--ink);margin-bottom:4px}
+.query-sub{font-size:12px;color:var(--warm-gray);margin-bottom:20px}
+.booking-card{background:var(--bg);border-radius:12px;padding:16px;
+  border:var(--card-bdr);margin-bottom:12px;animation:fadeUp .3s ease both}
+.booking-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.booking-name{font-size:15px;font-weight:600;color:var(--ink)}
+.booking-time{font-size:11px;color:var(--warm-gray)}
+.booking-info{font-size:12px;color:var(--warm-gray);line-height:1.8}
+.booking-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.booking-thumb{width:40px;height:54px;border-radius:5px;overflow:hidden;
+  border:var(--card-bdr);background:#ddd;flex-shrink:0}
+.booking-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.booking-tag{display:inline-block;padding:2px 8px;border-radius:100px;
+  background:var(--accent);color:#fff;font-size:10px;margin-right:4px;margin-bottom:4px}
+.no-booking{text-align:center;padding:32px 0;color:var(--warm-gray);font-size:13px}
+
+/* ══ 管理员后台 FAB（仅管理员可见） ══ */
 .owner-fab{position:fixed;bottom:24px;right:20px;z-index:300;
   width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;border:none;
   font-size:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);
-  display:flex;align-items:center;justify-content:center;transition:transform .2s;
+  display:none;align-items:center;justify-content:center;transition:transform .2s;
   -webkit-tap-highlight-color:transparent}
+.owner-fab.admin-visible{display:flex}
 .owner-fab:active{transform:scale(.92)}
 
-/* OWNER MODAL */
+/* ══ 管理员后台 MODAL ══ */
 .owner-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);
   backdrop-filter:blur(4px);display:flex;align-items:flex-end;
   opacity:0;pointer-events:none;transition:opacity .3s}
 .owner-modal.open{opacity:1;pointer-events:all}
-.owner-sheet{width:100%;background:var(--warm-white);border-radius:20px 20px 0 0;
-  padding:20px 20px 36px;max-height:85vh;overflow-y:auto;
+.owner-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;
+  padding:20px 20px 36px;max-height:90vh;overflow-y:auto;
   transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
 .owner-modal.open .owner-sheet{transform:translateY(0)}
 .owner-handle{width:40px;height:4px;background:var(--light-gray);border-radius:2px;margin:0 auto 20px}
 .owner-title{font-family:var(--font-display);font-size:18px;color:var(--ink);margin-bottom:4px}
-.owner-sub{font-size:11px;color:var(--warm-gray);margin-bottom:20px}
+.owner-sub{font-size:11px;color:var(--warm-gray);margin-bottom:16px}
+
+/* 主题切换器 */
+.theme-section{margin-bottom:20px;padding-bottom:16px;border-bottom:var(--card-bdr)}
+.theme-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--warm-gray);margin-bottom:10px}
+.theme-options{display:flex;gap:10px}
+.theme-btn{flex:1;padding:10px 4px;border-radius:10px;border:2px solid var(--light-gray);
+  font-size:11px;font-family:var(--font-sans);cursor:pointer;text-align:center;
+  transition:all .2s;-webkit-tap-highlight-color:transparent}
+.theme-btn.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(184,134,11,.2)}
+.theme-btn[data-t="warm"]{background:linear-gradient(135deg,#EDE7DC,#F7F3EE);color:#2D2520}
+.theme-btn[data-t="dark"]{background:linear-gradient(135deg,#1A1512,#0F0E0C);color:#F0EDE8}
+.theme-btn[data-t="fresh"]{background:linear-gradient(135deg,#DDE9FA,#F0F6FF);color:#1A2840}
+
+/* 管理样片区 */
 .manage-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;
   padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .manage-tabs::-webkit-scrollbar{display:none}
 .manage-tab{padding:7px 14px;border-radius:100px;border:1.5px solid var(--light-gray);
-  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--warm-white);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--bg2);
   white-space:nowrap;transition:all .2s;user-select:none;flex-shrink:0;
   -webkit-tap-highlight-color:transparent}
 .manage-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -315,7 +419,6 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 .manage-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:6px;opacity:1;transition:opacity .2s}
-.manage-item:hover .manage-overlay,.manage-item:active .manage-overlay{opacity:1}
 .manage-item-label{color:#fff;font-size:10px;text-align:center;padding:0 4px}
 .manage-del{background:var(--rose);color:#fff;border:none;border-radius:100px;
   font-size:11px;padding:4px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -339,23 +442,132 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 .rcb-cancel{background:var(--light-gray);color:var(--warm-gray)}
 .rcb-ok{background:var(--rose);color:#fff}
 
+/* ══ 预约记录管理 ══ */
+.admin-bookings{margin-top:20px;padding-top:16px;border-top:var(--card-bdr)}
+.admin-booking-item{background:var(--bg);border-radius:10px;padding:12px;
+  margin-bottom:8px;border:var(--card-bdr)}
+.admin-booking-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.admin-booking-info{font-size:11px;color:var(--warm-gray);line-height:1.7}
+.admin-booking-del{float:right;background:var(--rose);color:#fff;border:none;
+  border-radius:100px;padding:3px 10px;font-size:11px;cursor:pointer;margin-top:2px;
+  -webkit-tap-highlight-color:transparent}
+
+/* ══ 密码弹窗 ══ */
+.pwd-modal{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.8);
+  backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;
+  padding:24px}
+.pwd-modal.open{display:flex}
+.pwd-box{background:var(--bg2);border-radius:20px;padding:28px 24px;width:100%;max-width:320px;
+  text-align:center;animation:fadeUp .3s ease}
+.pwd-title{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.pwd-sub{font-size:12px;color:var(--warm-gray);margin-bottom:20px}
+.pwd-input{width:100%;padding:14px;border:1.5px solid var(--light-gray);
+  border-radius:10px;font-size:16px;text-align:center;letter-spacing:.3em;
+  background:var(--bg);color:var(--ink);outline:none;font-family:var(--font-sans);
+  transition:border-color .2s}
+.pwd-input:focus{border-color:var(--accent)}
+.pwd-btns{display:flex;gap:10px;margin-top:16px}
+.pwd-cancel{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--light-gray);
+  background:transparent;color:var(--warm-gray);font-size:13px;
+  font-family:var(--font-sans);cursor:pointer}
+.pwd-ok{flex:2;padding:12px;border-radius:10px;border:none;background:var(--accent);
+  color:#fff;font-size:13px;font-family:var(--font-sans);cursor:pointer}
+.pwd-err{font-size:12px;color:var(--rose);margin-top:8px;min-height:18px}
+
+/* ══ 隐藏的 LOGO 长按提示 ══ */
+.logo-press-hint{font-size:10px;color:transparent;margin-top:4px;
+  transition:color .3s;user-select:none}
+.logo-pressing .logo-press-hint{color:var(--warm-gray)}
+
+/* ══ MISC ══ */
 .page-content{padding-bottom:100px}
 .hidden{display:none!important}
 .row-btns{display:flex;gap:12px;margin-top:20px}
+
+/* ══ 管理员标识徽章 ══ */
+.admin-badge{display:none;align-items:center;gap:6px;padding:6px 12px;
+  background:rgba(184,134,11,.12);border:1px solid var(--accent);border-radius:100px;
+  font-size:11px;color:var(--accent);margin-bottom:16px}
+.admin-badge.show{display:flex}
+.admin-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* 退出登录 */
+.logout-btn{font-size:11px;color:var(--warm-gray);background:transparent;border:none;
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  font-family:var(--font-sans);padding:0}
+
+/* ══ 自定义风格参考图 ══ */
+.inspo-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.inspo-label-wrap{display:flex;align-items:center;gap:8px}
+.inspo-badge{font-size:10px;padding:2px 8px;border-radius:100px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-l));
+  color:#fff;letter-spacing:.04em}
+.inspo-desc{font-size:11px;color:var(--warm-gray);line-height:1.7;margin-bottom:14px}
+.inspo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.inspo-slot{aspect-ratio:3/4;border-radius:10px;overflow:hidden;position:relative;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+.inspo-slot:active{transform:scale(.96)}
+/* 空槽 — 上传触发 */
+.inspo-slot.empty{border:2px dashed var(--light-gray);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;background:transparent}
+.inspo-slot.empty .inspo-plus{font-size:24px;color:var(--accent);line-height:1}
+.inspo-slot.empty .inspo-plus-text{font-size:10px;color:var(--warm-gray);text-align:center}
+/* 已填充槽 */
+.inspo-slot.filled{border:2px solid var(--accent)}
+.inspo-slot.filled img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block}
+.inspo-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.65);color:#fff;border:none;font-size:11px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;
+  -webkit-tap-highlight-color:transparent}
+/* 自定义风格标签 */
+.custom-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.custom-tag{padding:7px 14px;border-radius:8px;border:1.5px solid var(--light-gray);
+  font-size:12px;color:var(--warm-gray);cursor:pointer;background:var(--bg2);
+  transition:all .2s;user-select:none;-webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;gap:5px}
+.custom-tag.selected{background:var(--accent);border-color:var(--accent);color:#fff}
+.custom-tag-icon{font-size:14px}
+/* 上传进度条 */
+.inspo-progress{height:3px;background:var(--light-gray);border-radius:2px;
+  margin-bottom:10px;overflow:hidden;display:none}
+.inspo-progress.show{display:block}
+.inspo-progress-bar{height:100%;background:var(--accent);border-radius:2px;
+  transition:width .3s ease;width:0}
+/* 参考图查看（在预约查询里） */
+.booking-inspo{margin-top:10px}
+.booking-inspo-title{font-size:11px;color:var(--warm-gray);margin-bottom:6px}
+.booking-inspo-grid{display:flex;gap:6px;flex-wrap:wrap}
+.booking-inspo-thumb{width:52px;height:70px;border-radius:6px;overflow:hidden;
+  border:var(--card-bdr);background:#ddd;flex-shrink:0;cursor:pointer}
+.booking-inspo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+/* 大图预览 */
+.inspo-viewer{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.95);
+  display:none;align-items:center;justify-content:center}
+.inspo-viewer.open{display:flex}
+.inspo-viewer img{max-width:90vw;max-height:85vh;border-radius:10px;object-fit:contain}
+.inspo-viewer-close{position:absolute;top:16px;right:16px;width:36px;height:36px;
+  border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
 
-<!-- 颗粒纹理层，pointer-events:none 不拦截任何点击 -->
 <div class="grain-overlay" aria-hidden="true"></div>
 
 <!-- HERO -->
 <div class="hero" id="heroSection">
   <div class="hero-glow"></div>
-  <div class="studio-en"><em>Right</em> Moment</div>
-  <div class="studio-cn">瞬时摄影工作室</div>
+  <div id="logoArea">
+    <div class="studio-en" id="logoText"><em>Right</em> Moment</div>
+    <div class="studio-cn">瞬时摄影工作室</div>
+  </div>
   <div class="hero-divider"><span>✦</span></div>
   <div class="hero-desc">请按照引导完成风格选择，我们将为您定制专属拍摄方案</div>
+  <button class="query-btn" onclick="openQueryModal()">📋 查询我的预约</button>
+  <div class="logo-press-hint" id="pressHint">管理员：长按 LOGO 5秒进入后台</div>
 </div>
 
 <!-- PROGRESS -->
@@ -485,6 +697,43 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
         <div class="form-note">* 我们会在24小时内通过电话联系您</div>
       </div>
     </div>
+
+    <!-- 自定义风格参考卡 -->
+    <div class="form-card">
+      <div class="inspo-header">
+        <div class="inspo-label-wrap">
+          <label class="form-label" style="margin-bottom:0">我的风格参考</label>
+          <span class="inspo-badge">选填</span>
+        </div>
+        <span style="font-size:11px;color:var(--warm-gray)" id="inspoCount">0 / 9</span>
+      </div>
+      <div class="inspo-desc">
+        上传您喜欢的风格图片，帮助摄影师更精准地理解您的期望。<br>
+        可从<b>手机相册</b>选取，或选择本地图片文件，最多 9 张。
+      </div>
+
+      <!-- 自定义风格标签（可多选） -->
+      <div style="font-size:11px;color:var(--warm-gray);margin-bottom:8px;letter-spacing:.05em">我期待的感觉（可多选）</div>
+      <div class="custom-tags" id="customTags">
+        <div class="custom-tag" onclick="toggleCustomTag('自然清新',this)"><span class="custom-tag-icon">🌿</span>自然清新</div>
+        <div class="custom-tag" onclick="toggleCustomTag('氛围暗调',this)"><span class="custom-tag-icon">🌙</span>氛围暗调</div>
+        <div class="custom-tag" onclick="toggleCustomTag('复古胶片',this)"><span class="custom-tag-icon">📷</span>复古胶片</div>
+        <div class="custom-tag" onclick="toggleCustomTag('韩系小清新',this)"><span class="custom-tag-icon">🌸</span>韩系小清新</div>
+        <div class="custom-tag" onclick="toggleCustomTag('油画质感',this)"><span class="custom-tag-icon">🎨</span>油画质感</div>
+        <div class="custom-tag" onclick="toggleCustomTag('日系淡雅',this)"><span class="custom-tag-icon">☁️</span>日系淡雅</div>
+        <div class="custom-tag" onclick="toggleCustomTag('大片感',this)"><span class="custom-tag-icon">🎬</span>大片感</div>
+        <div class="custom-tag" onclick="toggleCustomTag('纪实抓拍',this)"><span class="custom-tag-icon">✨</span>纪实抓拍</div>
+      </div>
+
+      <!-- 图片上传网格 -->
+      <div class="inspo-progress" id="inspoProgress">
+        <div class="inspo-progress-bar" id="inspoProgressBar"></div>
+      </div>
+      <div class="inspo-grid" id="inspoGrid"></div>
+
+      <input type="file" id="inspoInput" accept="image/*" multiple style="display:none"
+             onchange="handleInspoUpload(event)">
+    </div>
     <div class="submit-status" id="submitStatus"></div>
     <div class="row-btns">
       <button class="btn-secondary" style="flex:1" onclick="goToPage(3)">← 返回</button>
@@ -501,6 +750,7 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
     <div class="success-sub">感谢您选择 Right Moment<br>我们将在24小时内电话联系您<br>为您安排专属拍摄档期</div>
     <div class="success-card" id="successCard"></div>
     <button class="restart-btn" onclick="restartFlow()">重新选片</button>
+    <button class="query-link-btn" onclick="openQueryModal()">查看我的预约记录 →</button>
   </div>
 </div>
 
@@ -530,15 +780,37 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
   <button class="proceed-btn" onclick="goToPage(4)">填写预约信息，完成选片 →</button>
 </div>
 
-<!-- OWNER FAB -->
+<!-- 管理员 FAB（默认隐藏，登录后显示） -->
 <button class="owner-fab" id="ownerFab" onclick="openOwnerPanel()">⚙️</button>
 
-<!-- OWNER MODAL -->
+<!-- 管理员后台 MODAL -->
 <div class="owner-modal" id="ownerModal">
   <div class="owner-sheet" onclick="event.stopPropagation()">
     <div class="owner-handle"></div>
-    <div class="owner-title">样片管理</div>
-    <div class="owner-sub">上传真实样片替换默认图，存储在本设备浏览器（IndexedDB）</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="owner-title">样片管理后台</div>
+      <button class="logout-btn" onclick="adminLogout()">退出登录</button>
+    </div>
+    <div class="owner-sub">上传真实样片替换默认图（存储在本设备 IndexedDB）</div>
+
+    <!-- 管理员标识 -->
+    <div class="admin-badge show" id="adminBadge">
+      <div class="admin-dot"></div>
+      <span>管理员模式</span>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-section">
+      <div class="theme-label">🎨 界面风格设置</div>
+      <div class="theme-options">
+        <button class="theme-btn active" data-t="warm" onclick="applyTheme('warm',this)">☀️ 暖金</button>
+        <button class="theme-btn" data-t="dark" onclick="applyTheme('dark',this)">🌙 深夜</button>
+        <button class="theme-btn" data-t="fresh" onclick="applyTheme('fresh',this)">🌿 清新</button>
+      </div>
+    </div>
+
+    <!-- 样片分类管理 -->
+    <div class="theme-label" style="margin-bottom:10px">📷 样片管理</div>
     <div class="manage-tabs" id="manageTabs">
       <div class="manage-tab active" onclick="switchManageTab('mood',this)">情绪写真</div>
       <div class="manage-tab" onclick="switchManageTab('portrait',this)">清新写真</div>
@@ -549,11 +821,11 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
     </div>
     <div class="manage-grid" id="manageGrid"></div>
     <button class="manage-add-btn" onclick="document.getElementById('uploadInput').click()">
-      ＋ 上传样片（可多选）
+      ＋ 批量上传样片
     </button>
     <input type="file" id="uploadInput" accept="image/*" multiple style="display:none" onchange="handleUpload(event)">
     <div style="font-size:11px;color:var(--warm-gray);margin-bottom:12px;line-height:1.6">
-      支持 JPG/PNG/WEBP，建议竖向比例。图片永久存储在本设备，跨设备需重新上传。
+      支持 JPG/PNG/WEBP，建议竖向比例。图片存储在本设备，跨设备需重新上传。
     </div>
     <div class="reset-confirm hidden" id="resetConfirm">
       ⚠️ 确定清除「<span id="resetTabName"></span>」分类下所有自定义样片吗？
@@ -566,7 +838,45 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
       <button class="owner-btn owner-btn-outline" onclick="showResetConfirm()">🔄 重置此分类</button>
       <button class="owner-btn owner-btn-fill" onclick="closeOwnerPanel()">完成 ✓</button>
     </div>
+
+    <!-- 预约记录（仅管理员可见） -->
+    <div class="admin-bookings">
+      <div class="theme-label" style="margin-bottom:10px">📋 预约记录</div>
+      <div id="adminBookingList"></div>
+    </div>
   </div>
+</div>
+
+<!-- 预约查询弹窗（顾客端） -->
+<div class="query-modal" id="queryModal">
+  <div class="query-sheet" onclick="event.stopPropagation()">
+    <div class="query-handle"></div>
+    <div class="query-title">我的预约记录</div>
+    <div class="query-sub">以下是您在本设备提交的预约信息</div>
+    <div id="queryList"></div>
+    <button class="btn-secondary" style="width:100%;margin-top:8px" onclick="closeQueryModal()">关闭</button>
+  </div>
+</div>
+
+<!-- 密码验证弹窗 -->
+<div class="pwd-modal" id="pwdModal">
+  <div class="pwd-box">
+    <div class="pwd-title">🔐 管理员登录</div>
+    <div class="pwd-sub">请输入管理员密码</div>
+    <input class="pwd-input" id="pwdInput" type="password" maxlength="20"
+           placeholder="••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <div class="pwd-err" id="pwdErr"></div>
+    <div class="pwd-btns">
+      <button class="pwd-cancel" onclick="closePwdModal()">取消</button>
+      <button class="pwd-ok" onclick="checkPwd()">确认登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- 参考图大图预览 -->
+<div class="inspo-viewer" id="inspoViewer" onclick="closeInspoViewer()">
+  <button class="inspo-viewer-close" onclick="closeInspoViewer()">✕</button>
+  <img id="inspoViewerImg" src="" alt="参考图预览">
 </div>
 
 <script>
@@ -574,12 +884,18 @@ body{background:var(--cream);color:var(--charcoal);font-family:var(--font-sans);
 
 // ══ CONFIG ══
 const FORMSPREE = 'https://formspree.io/f/xpqepyze';
+const ADMIN_PWD = 'rm2024'; // ← 管理员密码，可修改
 
 // ══ STATE ══
 const S = {
   gender: null, age: null, styles: [],
-  liked: [], date: null, page: 1, lbItem: null
+  liked: [], date: null, page: 1, lbItem: null,
+  isAdmin: false,
+  customTags: [],       // 选中的风格标签
+  inspoImgs: []         // 参考图 dataURL 数组，最多9张
 };
+
+const MAX_INSPO = 9;
 
 const STYLE_NAMES = {
   mood:'情绪写真', portrait:'清新写真', couple:'情侣写真',
@@ -588,7 +904,6 @@ const STYLE_NAMES = {
 const AGE_MAP = {child:'0–6岁',teen:'7–17岁',young:'18–30岁',adult:'31–45岁',senior:'46岁+'};
 const GENDER_MAP = {female:'女生',male:'男生'};
 
-// ══ STYLE CARD IMAGES ══
 const STYLE_IMGS = {
   female:{
     mood:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80&fit=crop&crop=top',
@@ -616,125 +931,79 @@ const STYLE_META = [
   {key:'vintage', badge:'✨ 新品',badgeCls:'tag-new',    name:'复古胶片',desc:'质感 · 怀旧 · 胶片色调',fb:'linear-gradient(135deg,#d4a574,#8b6f47)'}
 ];
 
-// ══ SAMPLES DATA ══
 const SAMPLES = [
-  // 情绪写真
-  {id:1,style:'mood',label:'暗调情绪01',desc:'电影感暗调',bg:'linear-gradient(135deg,#1a1a2e,#4a1942)',
-   img:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=75&fit=crop&crop=face'},
-  {id:2,style:'mood',label:'烛光情绪02',desc:'温暖暗调',bg:'linear-gradient(135deg,#2c1810,#8b4513)',
-   img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=75&fit=crop&crop=face'},
-  {id:3,style:'mood',label:'迷离写真03',desc:'朦胧灰调',bg:'linear-gradient(135deg,#2d2d2d,#6b6b6b)',
-   img:'https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?w=400&q=75&fit=crop&crop=face'},
-  {id:4,style:'mood',label:'月光系列04',desc:'深夜蓝调',bg:'linear-gradient(135deg,#0a0a2e,#1a1a5e)',
-   img:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&q=75&fit=crop&crop=face'},
-  {id:5,style:'mood',label:'黑白情绪05',desc:'黑白高对比',bg:'linear-gradient(135deg,#111,#555)',
-   img:'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=400&q=75&fit=crop&crop=face'},
-  {id:6,style:'mood',label:'暗红系列06',desc:'神秘暗红',bg:'linear-gradient(135deg,#4a0000,#c0392b)',
-   img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=75&fit=crop&crop=face'},
-  {id:7,style:'mood',label:'森林光影07',desc:'户外暗调',bg:'linear-gradient(135deg,#1a2e1a,#2d4a2d)',
-   img:'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=400&q=75&fit=crop&crop=face'},
-  {id:8,style:'mood',label:'城市夜景08',desc:'霓虹暗调',bg:'linear-gradient(135deg,#1a0a2e,#3d0a4a)',
-   img:'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400&q=75&fit=crop&crop=face'},
-  // 清新写真
-  {id:9,style:'portrait',label:'樱花写真01',desc:'粉嫩少女感',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)',
-   img:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=75&fit=crop&crop=face'},
-  {id:10,style:'portrait',label:'自然写真02',desc:'清新自然光',bg:'linear-gradient(135deg,#d4efdf,#a9cce3)',
-   img:'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=75&fit=crop&crop=face'},
-  {id:11,style:'portrait',label:'阳光系列03',desc:'明亮温暖',bg:'linear-gradient(135deg,#fff9c4,#ffecb3)',
-   img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=75&fit=crop&crop=face'},
-  {id:12,style:'portrait',label:'花园写真04',desc:'唯美花园',bg:'linear-gradient(135deg,#f8bbd0,#e1bee7)',
-   img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=75&fit=crop&crop=face'},
-  {id:13,style:'portrait',label:'蓝调清新05',desc:'清爽蓝调',bg:'linear-gradient(135deg,#bbdefb,#b2ebf2)',
-   img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=75&fit=crop&crop=face'},
-  {id:14,style:'portrait',label:'森系写真06',desc:'绿意盎然',bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',
-   img:'https://images.unsplash.com/photo-1495385794356-15371f348c31?w=400&q=75&fit=crop&crop=face'},
-  {id:15,style:'portrait',label:'白纱写真07',desc:'纯净白调',bg:'linear-gradient(135deg,#f5f5f5,#e0e0e0)',
-   img:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=400&q=75&fit=crop&crop=face'},
-  {id:16,style:'portrait',label:'秋意写真08',desc:'秋日暖色',bg:'linear-gradient(135deg,#ffe0b2,#ffcc80)',
-   img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=75&fit=crop&crop=face'},
-  // 情侣写真
-  {id:17,style:'couple',label:'浪漫约会01',desc:'甜蜜浪漫',bg:'linear-gradient(135deg,#a18cd1,#fbc2eb)',
-   img:'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=400&q=75&fit=crop'},
-  {id:18,style:'couple',label:'纪念日02',desc:'珍贵时刻',bg:'linear-gradient(135deg,#ffdde1,#ee9ca7)',
-   img:'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&q=75&fit=crop'},
-  {id:19,style:'couple',label:'告白系列03',desc:'心动瞬间',bg:'linear-gradient(135deg,#f093fb,#f5576c)',
-   img:'https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=400&q=75&fit=crop'},
-  {id:20,style:'couple',label:'夕阳情侣04',desc:'黄昏浪漫',bg:'linear-gradient(135deg,#f7797d,#fbd786)',
-   img:'https://images.unsplash.com/photo-1523292562811-8fa7962a78c8?w=400&q=75&fit=crop'},
-  {id:21,style:'couple',label:'街拍情侣05',desc:'城市漫步',bg:'linear-gradient(135deg,#c9d6ff,#e2e2e2)',
-   img:'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400&q=75&fit=crop'},
-  {id:22,style:'couple',label:'花海情侣06',desc:'花海浪漫',bg:'linear-gradient(135deg,#f8c8d4,#e8a0b0)',
-   img:'https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=400&q=75&fit=crop'},
-  {id:23,style:'couple',label:'咖啡暖意07',desc:'日常温情',bg:'linear-gradient(135deg,#d4a373,#a0785a)',
-   img:'https://images.unsplash.com/photo-1529516548873-9ce57c8f155e?w=400&q=75&fit=crop'},
-  {id:24,style:'couple',label:'冬日情侣08',desc:'冬日浪漫',bg:'linear-gradient(135deg,#e8f4fd,#c5dff0)',
-   img:'https://images.unsplash.com/photo-1544717305-996b815c338c?w=400&q=75&fit=crop'},
-  // 旅拍写真
-  {id:25,style:'travel',label:'城市旅拍01',desc:'都市街拍',bg:'linear-gradient(135deg,#2bc0e4,#eaecc6)',
-   img:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=75&fit=crop'},
-  {id:26,style:'travel',label:'山野旅拍02',desc:'自然户外',bg:'linear-gradient(135deg,#4ca1af,#c4e0e5)',
-   img:'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=400&q=75&fit=crop'},
-  {id:27,style:'travel',label:'海边旅拍03',desc:'海风自由',bg:'linear-gradient(135deg,#0099f7,#c6e8fa)',
-   img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=75&fit=crop'},
-  {id:28,style:'travel',label:'建筑旅拍04',desc:'城市建筑',bg:'linear-gradient(135deg,#bdc3c7,#2c3e50)',
-   img:'https://images.unsplash.com/photo-1499856871958-5b9357976b82?w=400&q=75&fit=crop'},
-  {id:29,style:'travel',label:'古镇旅拍05',desc:'人文古典',bg:'linear-gradient(135deg,#c9a96e,#7a5c3a)',
-   img:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=75&fit=crop'},
-  {id:30,style:'travel',label:'沙漠旅拍06',desc:'荒野大漠',bg:'linear-gradient(135deg,#e8d5a3,#c4a35a)',
-   img:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=75&fit=crop'},
-  {id:31,style:'travel',label:'雪山旅拍07',desc:'冰雪世界',bg:'linear-gradient(135deg,#e8f4fd,#a8d5f0)',
-   img:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=75&fit=crop'},
-  {id:32,style:'travel',label:'丛林旅拍08',desc:'热带绿意',bg:'linear-gradient(135deg,#2d5a27,#4a8a3d)',
-   img:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=75&fit=crop'},
-  // 儿童写真
-  {id:33,style:'child',label:'气球派对01',desc:'欢乐童年',bg:'linear-gradient(135deg,#f6d365,#fda085)',
-   img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&q=75&fit=crop&crop=face'},
-  {id:34,style:'child',label:'彩虹宝宝02',desc:'色彩缤纷',bg:'linear-gradient(135deg,#a8edea,#fed6e3)',
-   img:'https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=400&q=75&fit=crop&crop=face'},
-  {id:35,style:'child',label:'玩具世界03',desc:'纯真年代',bg:'linear-gradient(135deg,#ffeaa7,#dfe6e9)',
-   img:'https://images.unsplash.com/photo-1488751045188-3c55bbf9a3fa?w=400&q=75&fit=crop&crop=face'},
-  {id:36,style:'child',label:'梦幻童话04',desc:'童话世界',bg:'linear-gradient(135deg,#e0c3fc,#8ec5fc)',
-   img:'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400&q=75&fit=crop&crop=face'},
-  {id:37,style:'child',label:'草地奔跑05',desc:'自然户外',bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',
-   img:'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=400&q=75&fit=crop&crop=face'},
-  {id:38,style:'child',label:'百日宝宝06',desc:'成长纪念',bg:'linear-gradient(135deg,#fff9c4,#ffecb3)',
-   img:'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&q=75&fit=crop&crop=face'},
-  {id:39,style:'child',label:'节日欢庆07',desc:'节日主题',bg:'linear-gradient(135deg,#ff9a9e,#fad0c4)',
-   img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75&fit=crop&crop=face'},
-  {id:40,style:'child',label:'亲子时光08',desc:'家庭温情',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)',
-   img:'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=400&q=75&fit=crop'},
-  // 复古胶片
-  {id:41,style:'vintage',label:'复古胶片01',desc:'70年代质感',bg:'linear-gradient(135deg,#d4a574,#8b6f47)',
-   img:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=75&fit=crop&crop=face'},
-  {id:42,style:'vintage',label:'老上海02',desc:'民国风情',bg:'linear-gradient(135deg,#8b6f47,#4a3728)',
-   img:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&q=75&fit=crop&crop=face'},
-  {id:43,style:'vintage',label:'年代记忆03',desc:'复古怀旧',bg:'linear-gradient(135deg,#c9a96e,#6b4c2a)',
-   img:'https://images.unsplash.com/photo-1520785643438-5bf77931f493?w=400&q=75&fit=crop&crop=face'},
-  {id:44,style:'vintage',label:'油画质感04',desc:'艺术油画',bg:'linear-gradient(135deg,#b8860b,#8b4513)',
-   img:'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&q=75&fit=crop&crop=face'},
-  {id:45,style:'vintage',label:'胶片街拍05',desc:'城市记忆',bg:'linear-gradient(135deg,#9e8970,#6b5a45)',
-   img:'https://images.unsplash.com/photo-1502033026069-10f4e7d6b950?w=400&q=75&fit=crop&crop=face'},
-  {id:46,style:'vintage',label:'复古婚纱06',desc:'岁月美好',bg:'linear-gradient(135deg,#f5e6d3,#e8c9a0)',
-   img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75&fit=crop'},
-  {id:47,style:'vintage',label:'黑白经典07',desc:'永恒黑白',bg:'linear-gradient(135deg,#555,#222)',
-   img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=75&fit=crop&sat=-100'},
-  {id:48,style:'vintage',label:'胶片人像08',desc:'温暖颗粒',bg:'linear-gradient(135deg,#d4956a,#8b5e3c)',
-   img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=75&fit=crop&crop=face'}
+  {id:1,style:'mood',label:'暗调情绪01',desc:'电影感暗调',bg:'linear-gradient(135deg,#1a1a2e,#4a1942)',img:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=75&fit=crop&crop=face'},
+  {id:2,style:'mood',label:'烛光情绪02',desc:'温暖暗调',bg:'linear-gradient(135deg,#2c1810,#8b4513)',img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=75&fit=crop&crop=face'},
+  {id:3,style:'mood',label:'迷离写真03',desc:'朦胧灰调',bg:'linear-gradient(135deg,#2d2d2d,#6b6b6b)',img:'https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?w=400&q=75&fit=crop&crop=face'},
+  {id:4,style:'mood',label:'月光系列04',desc:'深夜蓝调',bg:'linear-gradient(135deg,#0a0a2e,#1a1a5e)',img:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&q=75&fit=crop&crop=face'},
+  {id:5,style:'mood',label:'黑白情绪05',desc:'黑白高对比',bg:'linear-gradient(135deg,#111,#555)',img:'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=400&q=75&fit=crop&crop=face'},
+  {id:6,style:'mood',label:'暗红系列06',desc:'神秘暗红',bg:'linear-gradient(135deg,#4a0000,#c0392b)',img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=75&fit=crop&crop=face'},
+  {id:7,style:'mood',label:'森林光影07',desc:'户外暗调',bg:'linear-gradient(135deg,#1a2e1a,#2d4a2d)',img:'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=400&q=75&fit=crop&crop=face'},
+  {id:8,style:'mood',label:'城市夜景08',desc:'霓虹暗调',bg:'linear-gradient(135deg,#1a0a2e,#3d0a4a)',img:'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400&q=75&fit=crop&crop=face'},
+  {id:9,style:'portrait',label:'樱花写真01',desc:'粉嫩少女感',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)',img:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=75&fit=crop&crop=face'},
+  {id:10,style:'portrait',label:'自然写真02',desc:'清新自然光',bg:'linear-gradient(135deg,#d4efdf,#a9cce3)',img:'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=75&fit=crop&crop=face'},
+  {id:11,style:'portrait',label:'阳光系列03',desc:'明亮温暖',bg:'linear-gradient(135deg,#fff9c4,#ffecb3)',img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=75&fit=crop&crop=face'},
+  {id:12,style:'portrait',label:'花园写真04',desc:'唯美花园',bg:'linear-gradient(135deg,#f8bbd0,#e1bee7)',img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=75&fit=crop&crop=face'},
+  {id:13,style:'portrait',label:'蓝调清新05',desc:'清爽蓝调',bg:'linear-gradient(135deg,#bbdefb,#b2ebf2)',img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=75&fit=crop&crop=face'},
+  {id:14,style:'portrait',label:'森系写真06',desc:'绿意盎然',bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',img:'https://images.unsplash.com/photo-1495385794356-15371f348c31?w=400&q=75&fit=crop&crop=face'},
+  {id:15,style:'portrait',label:'白纱写真07',desc:'纯净白调',bg:'linear-gradient(135deg,#f5f5f5,#e0e0e0)',img:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=400&q=75&fit=crop&crop=face'},
+  {id:16,style:'portrait',label:'秋意写真08',desc:'秋日暖色',bg:'linear-gradient(135deg,#ffe0b2,#ffcc80)',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=75&fit=crop&crop=face'},
+  {id:17,style:'couple',label:'浪漫约会01',desc:'甜蜜浪漫',bg:'linear-gradient(135deg,#a18cd1,#fbc2eb)',img:'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=400&q=75&fit=crop'},
+  {id:18,style:'couple',label:'纪念日02',desc:'珍贵时刻',bg:'linear-gradient(135deg,#ffdde1,#ee9ca7)',img:'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&q=75&fit=crop'},
+  {id:19,style:'couple',label:'告白系列03',desc:'心动瞬间',bg:'linear-gradient(135deg,#f093fb,#f5576c)',img:'https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=400&q=75&fit=crop'},
+  {id:20,style:'couple',label:'夕阳情侣04',desc:'黄昏浪漫',bg:'linear-gradient(135deg,#f7797d,#fbd786)',img:'https://images.unsplash.com/photo-1523292562811-8fa7962a78c8?w=400&q=75&fit=crop'},
+  {id:21,style:'couple',label:'街拍情侣05',desc:'城市漫步',bg:'linear-gradient(135deg,#c9d6ff,#e2e2e2)',img:'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400&q=75&fit=crop'},
+  {id:22,style:'couple',label:'花海情侣06',desc:'花海浪漫',bg:'linear-gradient(135deg,#f8c8d4,#e8a0b0)',img:'https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=400&q=75&fit=crop'},
+  {id:23,style:'couple',label:'咖啡暖意07',desc:'日常温情',bg:'linear-gradient(135deg,#d4a373,#a0785a)',img:'https://images.unsplash.com/photo-1529516548873-9ce57c8f155e?w=400&q=75&fit=crop'},
+  {id:24,style:'couple',label:'冬日情侣08',desc:'冬日浪漫',bg:'linear-gradient(135deg,#e8f4fd,#c5dff0)',img:'https://images.unsplash.com/photo-1544717305-996b815c338c?w=400&q=75&fit=crop'},
+  {id:25,style:'travel',label:'城市旅拍01',desc:'都市街拍',bg:'linear-gradient(135deg,#2bc0e4,#eaecc6)',img:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=75&fit=crop'},
+  {id:26,style:'travel',label:'山野旅拍02',desc:'自然户外',bg:'linear-gradient(135deg,#4ca1af,#c4e0e5)',img:'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=400&q=75&fit=crop'},
+  {id:27,style:'travel',label:'海边旅拍03',desc:'海风自由',bg:'linear-gradient(135deg,#0099f7,#c6e8fa)',img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=75&fit=crop'},
+  {id:28,style:'travel',label:'建筑旅拍04',desc:'城市建筑',bg:'linear-gradient(135deg,#bdc3c7,#2c3e50)',img:'https://images.unsplash.com/photo-1499856871958-5b9357976b82?w=400&q=75&fit=crop'},
+  {id:29,style:'travel',label:'古镇旅拍05',desc:'人文古典',bg:'linear-gradient(135deg,#c9a96e,#7a5c3a)',img:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=75&fit=crop'},
+  {id:30,style:'travel',label:'沙漠旅拍06',desc:'荒野大漠',bg:'linear-gradient(135deg,#e8d5a3,#c4a35a)',img:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=75&fit=crop'},
+  {id:31,style:'travel',label:'雪山旅拍07',desc:'冰雪世界',bg:'linear-gradient(135deg,#e8f4fd,#a8d5f0)',img:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=75&fit=crop'},
+  {id:32,style:'travel',label:'丛林旅拍08',desc:'热带绿意',bg:'linear-gradient(135deg,#2d5a27,#4a8a3d)',img:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=75&fit=crop'},
+  {id:33,style:'child',label:'气球派对01',desc:'欢乐童年',bg:'linear-gradient(135deg,#f6d365,#fda085)',img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&q=75&fit=crop&crop=face'},
+  {id:34,style:'child',label:'彩虹宝宝02',desc:'色彩缤纷',bg:'linear-gradient(135deg,#a8edea,#fed6e3)',img:'https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=400&q=75&fit=crop&crop=face'},
+  {id:35,style:'child',label:'玩具世界03',desc:'纯真年代',bg:'linear-gradient(135deg,#ffeaa7,#dfe6e9)',img:'https://images.unsplash.com/photo-1488751045188-3c55bbf9a3fa?w=400&q=75&fit=crop&crop=face'},
+  {id:36,style:'child',label:'梦幻童话04',desc:'童话世界',bg:'linear-gradient(135deg,#e0c3fc,#8ec5fc)',img:'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400&q=75&fit=crop&crop=face'},
+  {id:37,style:'child',label:'草地奔跑05',desc:'自然户外',bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',img:'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=400&q=75&fit=crop&crop=face'},
+  {id:38,style:'child',label:'百日宝宝06',desc:'成长纪念',bg:'linear-gradient(135deg,#fff9c4,#ffecb3)',img:'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&q=75&fit=crop&crop=face'},
+  {id:39,style:'child',label:'节日欢庆07',desc:'节日主题',bg:'linear-gradient(135deg,#ff9a9e,#fad0c4)',img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75&fit=crop&crop=face'},
+  {id:40,style:'child',label:'亲子时光08',desc:'家庭温情',bg:'linear-gradient(135deg,#ffecd2,#fcb69f)',img:'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=400&q=75&fit=crop'},
+  {id:41,style:'vintage',label:'复古胶片01',desc:'70年代质感',bg:'linear-gradient(135deg,#d4a574,#8b6f47)',img:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=75&fit=crop&crop=face'},
+  {id:42,style:'vintage',label:'老上海02',desc:'民国风情',bg:'linear-gradient(135deg,#8b6f47,#4a3728)',img:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&q=75&fit=crop&crop=face'},
+  {id:43,style:'vintage',label:'年代记忆03',desc:'复古怀旧',bg:'linear-gradient(135deg,#c9a96e,#6b4c2a)',img:'https://images.unsplash.com/photo-1520785643438-5bf77931f493?w=400&q=75&fit=crop&crop=face'},
+  {id:44,style:'vintage',label:'油画质感04',desc:'艺术油画',bg:'linear-gradient(135deg,#b8860b,#8b4513)',img:'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&q=75&fit=crop&crop=face'},
+  {id:45,style:'vintage',label:'胶片街拍05',desc:'城市记忆',bg:'linear-gradient(135deg,#9e8970,#6b5a45)',img:'https://images.unsplash.com/photo-1502033026069-10f4e7d6b950?w=400&q=75&fit=crop&crop=face'},
+  {id:46,style:'vintage',label:'复古婚纱06',desc:'岁月美好',bg:'linear-gradient(135deg,#f5e6d3,#e8c9a0)',img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75&fit=crop'},
+  {id:47,style:'vintage',label:'黑白经典07',desc:'永恒黑白',bg:'linear-gradient(135deg,#555,#222)',img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=75&fit=crop&sat=-100'},
+  {id:48,style:'vintage',label:'胶片人像08',desc:'温暖颗粒',bg:'linear-gradient(135deg,#d4956a,#8b5e3c)',img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=75&fit=crop&crop=face'}
 ];
 
 let curFilter = 'all';
 let curManageTab = 'mood';
+// 图片预加载缓存（内存中）
+const _preloadCache = {};
 
 // ══ INDEXEDDB ══
-const DB_NAME = 'RightMomentDB', STORE = 'imgs';
+const DB_NAME = 'RightMomentDB', STORE = 'imgs', BOOKING_STORE = 'bookings';
 let _db = null;
-let _cache = null; // memory cache
+let _cache = null;
 
 function openDB() {
   return new Promise((res, rej) => {
     if (_db) { res(_db); return; }
-    const r = indexedDB.open(DB_NAME, 1);
-    r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+    const r = indexedDB.open(DB_NAME, 2);
+    r.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      if (!db.objectStoreNames.contains(BOOKING_STORE)) {
+        const bs = db.createObjectStore(BOOKING_STORE, {keyPath:'id'});
+        bs.createIndex('by_phone','phone',{unique:false});
+      }
+    };
     r.onsuccess = e => { _db = e.target.result; res(_db); };
     r.onerror = () => rej(r.error);
   });
@@ -775,10 +1044,13 @@ async function getCache() {
 async function saveImg(id, dataUrl) {
   await dbSet(id, dataUrl);
   if (_cache) _cache[String(id)] = dataUrl;
+  // 更新内存预加载缓存
+  _preloadCache[String(id)] = dataUrl;
 }
 async function delImg(id) {
   await dbDel(id);
   if (_cache) delete _cache[String(id)];
+  delete _preloadCache[String(id)];
 }
 async function clearStyleImgs(style) {
   for (const s of SAMPLES.filter(x => x.style === style)) await delImg(s.id);
@@ -788,7 +1060,222 @@ async function getImg(id) {
   return c[String(id)] || null;
 }
 
-// ══ RENDER STYLE CARDS ══
+// ══ 预约存储 ══
+async function saveBooking(booking) {
+  const d = await openDB();
+  return new Promise(res => {
+    const tx = d.transaction(BOOKING_STORE,'readwrite');
+    tx.objectStore(BOOKING_STORE).put(booking);
+    tx.oncomplete = res; tx.onerror = res;
+  });
+}
+async function getAllBookings() {
+  const d = await openDB();
+  return new Promise(res => {
+    const out = [];
+    const tx = d.transaction(BOOKING_STORE,'readonly');
+    const req = tx.objectStore(BOOKING_STORE).openCursor(null,'prev'); // 最新在前
+    req.onsuccess = e => {
+      const c = e.target.result;
+      if (c) { out.push(c.value); c.continue(); } else res(out);
+    };
+    req.onerror = () => res([]);
+  });
+}
+async function deleteBooking(id) {
+  const d = await openDB();
+  return new Promise(res => {
+    const tx = d.transaction(BOOKING_STORE,'readwrite');
+    tx.objectStore(BOOKING_STORE).delete(id);
+    tx.oncomplete = res; tx.onerror = res;
+  });
+}
+
+// ══ 图片预加载 ══
+function preloadImg(src, id) {
+  if (!src || _preloadCache[String(id)]) return Promise.resolve();
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => { _preloadCache[String(id)] = src; res(); };
+    img.onerror = res;
+    img.src = src;
+  });
+}
+
+// 后台静默预加载所有默认样片
+async function silentPreload() {
+  // 分批加载，不阻塞 UI
+  const chunks = [];
+  for (let i = 0; i < SAMPLES.length; i += 6) chunks.push(SAMPLES.slice(i, i+6));
+  for (const chunk of chunks) {
+    await new Promise(r => setTimeout(r, 300)); // 每批间隔300ms
+    await Promise.all(chunk.map(s => preloadImg(s.img, s.id)));
+  }
+}
+
+// ══ 主题切换 ══
+function applyTheme(theme, btn) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('rm_theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    const b = document.querySelector(`.theme-btn[data-t="${theme}"]`);
+    if (b) b.classList.add('active');
+  }
+}
+
+// ══ 管理员登录 ══
+let _pressTimer = null;
+let _pressCount = 0;
+
+function initLogoLongPress() {
+  const logo = document.getElementById('logoArea');
+  const hint = document.getElementById('pressHint');
+
+  const startPress = () => {
+    logo.classList.add('logo-pressing');
+    _pressTimer = setTimeout(() => {
+      logo.classList.remove('logo-pressing');
+      openPwdModal();
+    }, 5000);
+  };
+  const cancelPress = () => {
+    clearTimeout(_pressTimer);
+    logo.classList.remove('logo-pressing');
+  };
+
+  logo.addEventListener('touchstart', startPress, {passive:true});
+  logo.addEventListener('touchend', cancelPress);
+  logo.addEventListener('touchmove', cancelPress, {passive:true});
+  logo.addEventListener('mousedown', startPress);
+  logo.addEventListener('mouseup', cancelPress);
+  logo.addEventListener('mouseleave', cancelPress);
+}
+
+function openPwdModal() {
+  document.getElementById('pwdModal').classList.add('open');
+  document.getElementById('pwdInput').value = '';
+  document.getElementById('pwdErr').textContent = '';
+  setTimeout(() => document.getElementById('pwdInput').focus(), 300);
+}
+function closePwdModal() {
+  document.getElementById('pwdModal').classList.remove('open');
+}
+function checkPwd() {
+  const val = document.getElementById('pwdInput').value;
+  if (val === ADMIN_PWD) {
+    closePwdModal();
+    adminLogin();
+  } else {
+    document.getElementById('pwdErr').textContent = '密码错误，请重试';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+function adminLogin() {
+  S.isAdmin = true;
+  sessionStorage.setItem('rm_admin', '1');
+  document.getElementById('ownerFab').classList.add('admin-visible');
+}
+function adminLogout() {
+  S.isAdmin = false;
+  sessionStorage.removeItem('rm_admin');
+  document.getElementById('ownerFab').classList.remove('admin-visible');
+  closeOwnerPanel();
+}
+
+// ══ 预约查询（顾客端） ══
+function openQueryModal() {
+  document.getElementById('queryModal').classList.add('open');
+  renderQueryList();
+}
+function closeQueryModal() {
+  document.getElementById('queryModal').classList.remove('open');
+}
+document.getElementById('queryModal').addEventListener('click', function(e){
+  if (e.target === this) closeQueryModal();
+});
+
+async function renderQueryList() {
+  const bookings = await getAllBookings();
+  const el = document.getElementById('queryList');
+  if (!bookings.length) {
+    el.innerHTML = '<div class="no-booking">📭 暂无预约记录<br><span style="font-size:11px">完成选片提交后可在此查看</span></div>';
+    return;
+  }
+  el.innerHTML = bookings.map(b => `
+    <div class="booking-card">
+      <div class="booking-card-header">
+        <div class="booking-name">👤 ${b.姓名 || '—'}</div>
+        <div class="booking-time">${b._time || ''}</div>
+      </div>
+      <div class="booking-info">
+        📱 ${b.手机号 || '—'} &nbsp;|&nbsp; ${b.性别||''} · ${b.年龄段||''}
+        <br>🎨 ${b.风格偏好 || '—'}
+        ${b.自定义风格 && b.自定义风格!=='无' ? `<br>✨ 自定义：${b.自定义风格}` : ''}
+        <br>📅 ${b.期望日期 || '—'}
+        ${b.备注 && b.备注!=='无' ? `<br>💬 ${b.备注}` : ''}
+      </div>
+      ${b._likedLabels && b._likedLabels.length ? `
+        <div style="margin-top:8px;font-size:11px;color:var(--warm-gray)">收藏样片：</div>
+        <div style="margin-top:4px">${b._likedLabels.map(l=>`<span class="booking-tag">${l}</span>`).join('')}</div>
+      ` : ''}
+      ${b._inspoImgs && b._inspoImgs.length ? `
+        <div class="booking-inspo">
+          <div class="booking-inspo-title">📸 我的参考图（${b._inspoImgs.length} 张）</div>
+          <div class="booking-inspo-grid">
+            ${b._inspoImgs.map((src,i) => `
+              <div class="booking-inspo-thumb" onclick="openInspoViewer(-1,'${btoa(i.toString())}',this)">
+                <img src="${src}" alt="参考图${i+1}" loading="lazy">
+              </div>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// ══ 管理员预约记录 ══
+async function renderAdminBookings() {
+  const bookings = await getAllBookings();
+  const el = document.getElementById('adminBookingList');
+  if (!bookings.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--warm-gray);padding:8px 0">暂无预约记录</div>';
+    return;
+  }
+  el.innerHTML = bookings.map(b => `
+    <div class="admin-booking-item">
+      <button class="admin-booking-del" onclick="adminDelBooking('${b.id}')">删除</button>
+      <div class="admin-booking-name">${b.姓名 || '—'} · ${b.手机号 || '—'}</div>
+      <div class="admin-booking-info">
+        ${b.性别||''} · ${b.年龄段||''} | 风格：${b.风格偏好||'—'}<br>
+        ${b.自定义风格 && b.自定义风格!=='无' ? `自定义：${b.自定义风格}<br>` : ''}
+        日期：${b.期望日期||'—'} | 样片：${b.收藏样片||'0张'} | 参考图：${b.参考图数量||'0张'}<br>
+        ${b.样片明细 && b.样片明细!=='无' ? `明细：${b.样片明细}<br>` : ''}
+        ${b.备注 && b.备注!=='无' ? `备注：${b.备注}<br>` : ''}
+        提交：${b._time||'—'}
+      </div>
+      ${b._inspoImgs && b._inspoImgs.length ? `
+        <div class="booking-inspo" style="margin-top:8px">
+          <div class="booking-inspo-title">参考图（${b._inspoImgs.length} 张）</div>
+          <div class="booking-inspo-grid">
+            ${b._inspoImgs.map((src,i)=>`
+              <div class="booking-inspo-thumb" onclick="openInspoViewer(-1,null,this)">
+                <img src="${src}" alt="" loading="lazy">
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+async function adminDelBooking(id) {
+  if (!confirm('确定删除该条预约记录？')) return;
+  await deleteBooking(id);
+  await renderAdminBookings();
+}
+
+// ══ 渲染风格卡 ══
 function renderStyleCards() {
   const g = S.gender || 'female';
   const imgs = STYLE_IMGS[g];
@@ -808,23 +1295,52 @@ function renderStyleCards() {
     </div>`).join('');
 }
 
-// ══ RENDER SAMPLES ══
+// ══ 渲染样片（含骨架屏 + 懒加载 + 预加载优先） ══
 async function renderSamples(filter) {
   const list = filter === 'all' ? SAMPLES : SAMPLES.filter(s => s.style === filter);
   document.getElementById('galleryCount').textContent = list.length + ' 张';
   const cache = await getCache();
-  document.getElementById('sampleGrid').innerHTML = list.map(s => {
-    const custom = cache[String(s.id)];
-    const src = custom || s.img;
-    const liked = S.liked.includes(s.id);
-    return `<div class="sample-item${liked?' liked':''}" id="si-${s.id}" onclick="openLightbox(${s.id})">
-      <div class="sample-thumb" style="background:${s.bg}">
-        ${src ? `<img src="${src}" alt="${s.label}" loading="lazy">` :
-                `<div class="sample-thumb-fallback">📷</div>`}
-      </div>
-      <button class="sample-fav" onclick="doToggleLike(event,${s.id})">${liked?'❤️':'🤍'}</button>
-    </div>`;
-  }).join('');
+
+  // 先渲染骨架屏
+  document.getElementById('sampleGrid').innerHTML = list.map(s => `
+    <div class="sample-item${S.liked.includes(s.id)?' liked':''}" id="si-${s.id}" onclick="openLightbox(${s.id})">
+      <div class="sample-thumb skeleton" style="background:${s.bg}" id="st-${s.id}"></div>
+      <button class="sample-fav" onclick="doToggleLike(event,${s.id})">${S.liked.includes(s.id)?'❤️':'🤍'}</button>
+    </div>`).join('');
+
+  // 逐个加载图片（IntersectionObserver 懒加载）
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const id = Number(entry.target.dataset.id);
+      const s = SAMPLES.find(x => x.id === id);
+      if (!s) return;
+      obs.unobserve(entry.target);
+      const src = cache[String(id)] || _preloadCache[String(id)] || s.img;
+      loadSampleImg(entry.target, src, s.bg);
+    });
+  }, {rootMargin:'100px'});
+
+  list.forEach(s => {
+    const thumb = document.getElementById('st-'+s.id);
+    if (!thumb) return;
+    thumb.dataset.id = s.id;
+    observer.observe(thumb);
+  });
+}
+
+function loadSampleImg(container, src, bg) {
+  if (!src) { container.classList.remove('skeleton'); container.innerHTML = '<div class="sample-thumb-fallback">📷</div>'; return; }
+  container.classList.remove('skeleton');
+  container.style.background = bg;
+  const img = document.createElement('img');
+  img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s ease';
+  img.onload = () => { img.style.opacity = '1'; };
+  img.onerror = () => { container.innerHTML = '<div class="sample-thumb-fallback">📷</div>'; };
+  img.src = src;
+  img.alt = '';
+  container.innerHTML = '';
+  container.appendChild(img);
 }
 
 function filterSamples(filter, btn) {
@@ -842,17 +1358,22 @@ async function openLightbox(id) {
   const src = custom || item.img;
   const box = document.getElementById('lbImg');
   box.style.background = item.bg;
-  box.innerHTML = src
-    ? `<img src="${src}" alt="${item.label}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
-    : `<span style="position:relative;z-index:1;font-size:64px">📷</span>`;
+  // 骨架屏占位
+  box.innerHTML = `<div class="skeleton" style="position:absolute;inset:0;border-radius:12px"></div>`;
+  const img = document.createElement('img');
+  img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s';
+  img.onload = () => { img.style.opacity = '1'; box.querySelector('.skeleton')?.remove(); };
+  img.onerror = () => { box.innerHTML = '<span style="position:relative;z-index:1;font-size:64px">📷</span>'; };
+  img.src = src;
+  box.appendChild(img);
+
   document.getElementById('lbTitle').textContent = item.label;
   document.getElementById('lbSub').textContent = STYLE_NAMES[item.style] + ' · ' + item.desc;
   updateLbBtn(id);
   document.getElementById('lightbox').classList.add('open');
 }
 function updateLbBtn(id) {
-  document.getElementById('lbLikeBtn').textContent =
-    S.liked.includes(id) ? '💔 取消收藏' : '❤️ 收藏此样片';
+  document.getElementById('lbLikeBtn').textContent = S.liked.includes(id) ? '💔 取消收藏' : '❤️ 收藏此样片';
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 function toggleLikeFromLightbox() {
@@ -864,7 +1385,6 @@ async function doToggleLike(e, id) {
   if (e) e.stopPropagation();
   const idx = S.liked.indexOf(id);
   if (idx === -1) S.liked.push(id); else S.liked.splice(idx,1);
-  // update grid item
   const el = document.getElementById('si-'+id);
   if (el) {
     el.classList.toggle('liked', S.liked.includes(id));
@@ -884,13 +1404,13 @@ async function refreshLikedBar() {
     const s = SAMPLES.find(x => x.id === id);
     const src = cache[String(id)] || s.img;
     return `<div class="liked-thumb" style="background:${s.bg}">
-      ${src ? `<img src="${src}" alt="">` : ''}
+      ${src ? `<img src="${src}" alt="" loading="lazy">` : ''}
       <button class="liked-thumb-remove" onclick="doToggleLike(null,${id})">✕</button>
     </div>`;
   }).join('');
 }
 
-// ══ SELECTIONS ══
+// ══ 选择 ══
 function selectGender(g, el) {
   S.gender = g;
   document.querySelectorAll('.gender-card').forEach(c => c.classList.remove('selected'));
@@ -913,7 +1433,7 @@ function selectDate(d, el) {
   el.classList.add('selected');
 }
 
-// ══ NAVIGATION ══
+// ══ 导航 ══
 async function goToPage(n) {
   if (n === 2 && !S.gender) { alert('请先选择性别 😊'); return; }
   if (n === 3 && S.styles.length === 0) { alert('请至少选择一种拍摄风格 📸'); return; }
@@ -926,7 +1446,6 @@ async function goToPage(n) {
   if (pg) pg.classList.remove('hidden');
   S.page = n;
 
-  // update progress
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('s'+i);
     if (!el) continue;
@@ -936,7 +1455,8 @@ async function goToPage(n) {
   }
   document.getElementById('heroSection').style.display = n === 1 ? '' : 'none';
   document.getElementById('progressBar').style.display = n === 5 ? 'none' : '';
-  document.getElementById('ownerFab').style.display = n === 5 ? 'none' : '';
+  document.getElementById('ownerFab').style.display = (n === 5 || !S.isAdmin) ? 'none' : '';
+  if (S.isAdmin && n !== 5) document.getElementById('ownerFab').classList.add('admin-visible');
   document.getElementById('likedBar').classList.remove('visible');
 
   if (n === 2) renderStyleCards();
@@ -959,13 +1479,125 @@ async function buildSummary() {
       const s = SAMPLES.find(x => x.id === id);
       const src = cache[String(id)] || s.img;
       return `<div class="summary-thumb" style="background:${s.bg}">
-        ${src ? `<img src="${src}" alt="">` : ''}
+        ${src ? `<img src="${src}" alt="" loading="lazy">` : ''}
       </div>`;
     }).join('');
   }
+  // 渲染参考图网格
+  renderInspoGrid();
 }
 
-// ══ SUBMIT ══
+// ══ 自定义风格参考图 ══
+
+function toggleCustomTag(tag, el) {
+  const idx = S.customTags.indexOf(tag);
+  if (idx === -1) S.customTags.push(tag);
+  else S.customTags.splice(idx, 1);
+  el.classList.toggle('selected', S.customTags.includes(tag));
+}
+
+function renderInspoGrid() {
+  const grid = document.getElementById('inspoGrid');
+  const count = S.inspoImgs.length;
+  document.getElementById('inspoCount').textContent = `${count} / ${MAX_INSPO}`;
+
+  let html = '';
+  // 已上传的图
+  S.inspoImgs.forEach((src, i) => {
+    html += `<div class="inspo-slot filled">
+      <img src="${src}" alt="参考图${i+1}" onclick="openInspoViewer(${i})">
+      <button class="inspo-del" onclick="event.stopPropagation();removeInspoImg(${i})">✕</button>
+    </div>`;
+  });
+  // 空槽（最多补到3个，或至少留1个上传入口）
+  if (count < MAX_INSPO) {
+    const emptyCount = Math.min(MAX_INSPO - count, count === 0 ? 3 : 1);
+    for (let i = 0; i < emptyCount; i++) {
+      html += `<div class="inspo-slot empty" onclick="triggerInspoUpload()">
+        <div class="inspo-plus">＋</div>
+        <div class="inspo-plus-text">${count === 0 && i === 0 ? '从相册选取\n或本地文件' : '继续添加'}</div>
+      </div>`;
+    }
+  }
+  grid.innerHTML = html;
+}
+
+function triggerInspoUpload() {
+  if (S.inspoImgs.length >= MAX_INSPO) return;
+  document.getElementById('inspoInput').click();
+}
+
+async function handleInspoUpload(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+
+  const remaining = MAX_INSPO - S.inspoImgs.length;
+  const toProcess = files.slice(0, remaining);
+
+  // 显示进度条
+  const progress = document.getElementById('inspoProgress');
+  const bar = document.getElementById('inspoProgressBar');
+  progress.classList.add('show');
+  bar.style.width = '0%';
+
+  let done = 0;
+  await Promise.all(toProcess.map(file => new Promise(res => {
+    // 压缩到最大 1200px 宽，质量 0.82
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 1200;
+        let {width: w, height: h} = img;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', 0.82);
+        S.inspoImgs.push(compressed);
+        done++;
+        bar.style.width = `${Math.round(done / toProcess.length * 100)}%`;
+        res();
+      };
+      img.onerror = res;
+      img.src = e.target.result;
+    };
+    reader.onerror = res;
+    reader.readAsDataURL(file);
+  })));
+
+  setTimeout(() => { progress.classList.remove('show'); bar.style.width = '0%'; }, 400);
+  event.target.value = '';
+  renderInspoGrid();
+}
+
+function removeInspoImg(idx) {
+  S.inspoImgs.splice(idx, 1);
+  renderInspoGrid();
+}
+
+function openInspoViewer(idx, _unused, thumbEl) {
+  const viewer = document.getElementById('inspoViewer');
+  let src;
+  if (idx >= 0) {
+    // 来自当前填写的参考图
+    src = S.inspoImgs[idx];
+  } else if (thumbEl) {
+    // 来自预约查询里的缩略图
+    src = thumbEl.querySelector('img')?.src;
+  }
+  if (!src) return;
+  document.getElementById('inspoViewerImg').src = src;
+  viewer.classList.add('open');
+}
+function closeInspoViewer() {
+  document.getElementById('inspoViewer').classList.remove('open');
+}
+
+// ══ 提交 ══
 async function submitForm() {
   const name = document.getElementById('inputName').value.trim();
   const phone = document.getElementById('inputPhone').value.trim();
@@ -977,7 +1609,16 @@ async function submitForm() {
     return s ? `[${STYLE_NAMES[s.style]}] ${s.label}` : id;
   }).join(' | ');
 
+  const likedLabels = S.liked.map(id => {
+    const s = SAMPLES.find(x => x.id === id);
+    return s ? s.label : String(id);
+  });
+
+  const now = new Date();
+  const timeStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
   const payload = {
+    id: Date.now(),
     姓名: name, 手机号: phone,
     性别: GENDER_MAP[S.gender] || '未选',
     年龄段: AGE_MAP[S.age] || '未选',
@@ -985,7 +1626,12 @@ async function submitForm() {
     期望日期: S.date || '待商议',
     收藏样片: S.liked.length + ' 张',
     样片明细: likedDetail || '无',
-    备注: document.getElementById('inputNote').value.trim() || '无'
+    自定义风格: S.customTags.length ? S.customTags.join('、') : '无',
+    参考图数量: S.inspoImgs.length + ' 张',
+    备注: document.getElementById('inputNote').value.trim() || '无',
+    _time: timeStr,
+    _likedLabels: likedLabels,
+    _inspoImgs: S.inspoImgs   // base64 图片数组，仅存本地
   };
 
   const statusEl = document.getElementById('submitStatus');
@@ -995,11 +1641,16 @@ async function submitForm() {
   statusEl.className = 'submit-status status-sending show';
   statusEl.textContent = '⏳ 提交中，请稍候...';
 
+  // 先存本地
+  await saveBooking(payload);
+
   try {
+    // Formspree 只发文字字段，图片仅存本地
+    const { _inspoImgs, _likedLabels, ...formPayload } = payload;
     const res = await fetch(FORMSPREE, {
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify(payload)
+      body: JSON.stringify(formPayload)
     });
     if (res.ok) {
       showSuccess(payload);
@@ -1008,14 +1659,26 @@ async function submitForm() {
     }
   } catch(err) {
     statusEl.className = 'submit-status status-error show';
-    statusEl.textContent = '⚠️ 提交失败，请检查网络后重试，或直接拨打门店电话预约。';
+    statusEl.textContent = '⚠️ 网络提交失败，但预约信息已保存在本设备，请截图或联系门店确认。';
     btn.disabled = false;
   }
 }
 
 function showSuccess(payload) {
+  const display = {
+    '姓名': payload.姓名,
+    '手机号': payload.手机号,
+    '性别': payload.性别,
+    '年龄段': payload.年龄段,
+    '风格偏好': payload.风格偏好,
+    '自定义风格': payload.自定义风格,
+    '期望日期': payload.期望日期,
+    '收藏样片': payload.收藏样片,
+    '参考图': payload.参考图数量,
+    '提交时间': payload._time
+  };
   document.getElementById('successCard').innerHTML =
-    Object.entries(payload).map(([k,v]) =>
+    Object.entries(display).map(([k,v]) =>
       `<div class="success-row"><span>${k}</span><span>${v}</span></div>`
     ).join('');
   goToPage(5);
@@ -1023,7 +1686,9 @@ function showSuccess(payload) {
 
 function restartFlow() {
   S.gender=null; S.age=null; S.styles=[]; S.liked=[]; S.date=null;
+  S.customTags=[]; S.inspoImgs=[];
   document.querySelectorAll('.gender-card,.age-chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.custom-tag').forEach(c=>c.classList.remove('selected'));
   document.getElementById('inputName').value='';
   document.getElementById('inputPhone').value='';
   document.getElementById('inputNote').value='';
@@ -1032,10 +1697,11 @@ function restartFlow() {
   goToPage(1);
 }
 
-// ══ OWNER PANEL ══
+// ══ 管理员后台 ══
 async function openOwnerPanel() {
   document.getElementById('ownerModal').classList.add('open');
   await renderManageGrid(curManageTab);
+  await renderAdminBookings();
 }
 async function closeOwnerPanel() {
   document.getElementById('ownerModal').classList.remove('open');
@@ -1061,13 +1727,13 @@ async function renderManageGrid(style) {
     const custom = cache[String(s.id)];
     const src = custom || s.img;
     return `<div class="manage-item" onclick="openManageItem(${s.id})">
-      <div class="manage-item-inner" style="width:100%;height:100%;background:${s.bg}">
+      <div class="manage-item-inner" style="background:${s.bg}">
         ${src ? `<img src="${src}" alt="${s.label}" loading="lazy" ${custom?'':'style="opacity:.55"'}>` : ''}
       </div>
       <div class="manage-overlay">
         <div class="manage-item-label">${s.label}${custom?' ✅':''}</div>
         ${custom ? `<button class="manage-del" onclick="event.stopPropagation();delCustomImg(${s.id})">删除</button>` :
-                   `<div style="font-size:10px;color:rgba(255,255,255,.8)">默认图</div>`}
+                   `<div style="font-size:10px;color:rgba(255,255,255,.8)">点击换图</div>`}
       </div>
     </div>`;
   }).join('');
@@ -1075,7 +1741,6 @@ async function renderManageGrid(style) {
 }
 
 function openManageItem(id) {
-  // On mobile, tapping shows overlay; tapping upload replaces image
   const el = document.getElementById('uploadInput');
   el.dataset.targetId = id;
   el.click();
@@ -1098,7 +1763,6 @@ async function handleUpload(event) {
     '<div style="grid-column:1/-1;text-align:center;padding:12px;font-size:12px;color:var(--warm-gray)">⏳ 上传中...</div>');
 
   if (targetId) {
-    // Single slot replacement from tapping an item
     const file = files[0];
     await new Promise(res => {
       const reader = new FileReader();
@@ -1138,36 +1802,38 @@ async function doReset() {
 
 // ══ INIT ══
 (async function init() {
-  // warm up IndexedDB
+  await openDB();
   await getCache();
 
-  // ── iOS Safari 兼容：FastClick 式修复，消除 300ms 延迟 ──
-  // iOS 13+ 已默认消除延迟，但旧版 Safari 需要 touch 监听
+  // 恢复主题
+  const savedTheme = localStorage.getItem('rm_theme') || 'warm';
+  applyTheme(savedTheme, null);
+
+  // 恢复管理员登录状态（session 内有效）
+  if (sessionStorage.getItem('rm_admin') === '1') {
+    adminLogin();
+  }
+
+  // 初始化 LOGO 长按事件
+  initLogoLongPress();
+
+  // iOS 兼容
   if (/iP(hone|ad|od)/i.test(navigator.userAgent)) {
     document.addEventListener('touchstart', function(){}, {passive:true});
   }
 
-  // ── iOS "添加到主屏幕" 提示（仅在 Safari 独立模式外显示一次）──
+  // 后台静默预加载样片
+  setTimeout(silentPreload, 1500);
+
+  // iOS 添加到主屏幕提示
   const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isStandalone = window.navigator.standalone === true;
   if (isIOS && isSafari && !isStandalone && !sessionStorage.getItem('pwa-hint-shown')) {
     sessionStorage.setItem('pwa-hint-shown', '1');
     const hint = document.createElement('div');
-    hint.style.cssText = `
-      position:fixed;bottom:0;left:0;right:0;z-index:9998;
-      background:#1C1917;color:#fff;padding:14px 20px 28px;
-      font-size:13px;line-height:1.7;text-align:center;
-      border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.3);
-    `;
-    hint.innerHTML = `
-      <div style="font-size:15px;font-weight:600;margin-bottom:6px">📱 添加到主屏幕</div>
-      <div style="color:rgba(255,255,255,.75)">点击底部 <b style="color:#fff">分享</b> 按钮 → 选择「<b style="color:#fff">添加到主屏幕</b>」<br>即可像 App 一样使用本页面</div>
-      <button onclick="this.parentNode.remove()" style="
-        margin-top:12px;padding:8px 28px;border-radius:100px;border:1.5px solid rgba(255,255,255,.4);
-        background:transparent;color:#fff;font-size:13px;cursor:pointer;
-      ">知道了</button>
-    `;
+    hint.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#1C1917;color:#fff;padding:14px 20px 28px;font-size:13px;line-height:1.7;text-align:center;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.3);';
+    hint.innerHTML = `<div style="font-size:15px;font-weight:600;margin-bottom:6px">📱 添加到主屏幕</div><div style="color:rgba(255,255,255,.75)">点击底部 <b style="color:#fff">分享</b> 按钮 → 选择「<b style="color:#fff">添加到主屏幕</b>」</div><button onclick="this.parentNode.remove()" style="margin-top:12px;padding:8px 28px;border-radius:100px;border:1.5px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-size:13px;cursor:pointer;">知道了</button>`;
     document.body.appendChild(hint);
   }
 })();
